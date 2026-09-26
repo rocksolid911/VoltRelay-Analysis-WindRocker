@@ -1,0 +1,260 @@
+1
+00:00:00,000 --> 00:00:01,370
+VoltRelay grew fast:
+
+2
+00:00:01,370 --> 00:00:04,350
+completed swaps nearly tripled in eighteen months,
+
+3
+00:00:04,360 --> 00:00:08,050
+and monthly revenue went from six to almost twenty million rupees.
+
+4
+00:00:08,850 --> 00:00:11,250
+But failed swaps spiked every summer,
+
+5
+00:00:11,300 --> 00:00:13,240
+new riders stopped coming back,
+
+6
+00:00:13,300 --> 00:00:16,690
+and each swap now loses more money than it did after last
+
+7
+00:00:16,690 --> 00:00:17,910
+year's price rise.
+
+8
+00:00:18,730 --> 00:00:21,660
+Leadership has four budget proposals on the table.
+
+9
+00:00:22,090 --> 00:00:24,960
+Our job was to find out what is actually driving these
+
+10
+00:00:24,960 --> 00:00:27,430
+outcomes, before any money is spent.
+
+11
+00:00:28,250 --> 00:00:31,610
+We analysed all 3.9 million swap attempts,
+
+12
+00:00:31,610 --> 00:00:34,070
+hourly station telemetry, battery records,
+
+13
+00:00:34,070 --> 00:00:36,130
+rider profiles and support tickets,
+
+14
+00:00:36,130 --> 00:00:37,750
+in DuckDB and Python.
+
+15
+00:00:38,560 --> 00:00:39,660
+First we cleaned:
+
+16
+00:00:39,660 --> 00:00:42,800
+we removed two test stations that had billed almost four
+
+17
+00:00:42,800 --> 00:00:47,140
+million rupees, fixed a firmware bug that shifted 139,000
+
+18
+00:00:47,140 --> 00:00:49,460
+timestamps by five and a half hours,
+
+19
+00:00:49,470 --> 00:00:52,440
+and re-read ticket comments in English and Hinglish.
+
+20
+00:00:53,240 --> 00:00:54,850
+Then we followed one chain:
+
+21
+00:00:54,850 --> 00:00:56,990
+equipment, to service, to retention,
+
+22
+00:00:56,990 --> 00:00:58,140
+to unit economics.
+
+23
+00:00:58,940 --> 00:00:59,840
+Insight one:
+
+24
+00:00:59,840 --> 00:01:01,830
+failures are not spread evenly.
+
+25
+00:01:02,290 --> 00:01:05,230
+They concentrate in Jaipur, Delhi and Hyderabad,
+
+26
+00:01:05,230 --> 00:01:06,000
+in summer.
+
+27
+00:01:06,830 --> 00:01:08,300
+The telemetry shows why:
+
+28
+00:01:08,300 --> 00:01:12,820
+above 45 degrees, a first-generation cabinet needs 156
+
+29
+00:01:12,820 --> 00:01:15,530
+minutes to charge a pack instead of 88,
+
+30
+00:01:15,530 --> 00:01:19,300
+and runs out of charged batteries in 37 percent of hours.
+
+31
+00:01:20,120 --> 00:01:25,020
+Just 36 Gen1 stations in those three cities cause 57.5
+
+32
+00:01:25,020 --> 00:01:27,000
+percent of all summer failures.
+
+33
+00:01:27,790 --> 00:01:28,770
+Insight two:
+
+34
+00:01:28,770 --> 00:01:31,110
+three bad battery lots from one supplier.
+
+35
+00:01:31,570 --> 00:01:34,050
+They lost health 2.4 times faster,
+
+36
+00:01:34,120 --> 00:01:37,970
+giving riders 49 kilometres per swap instead of 61,
+
+37
+00:01:37,970 --> 00:01:41,830
+and costing 82 rupees of wear per swap instead of 35.
+
+38
+00:01:42,640 --> 00:01:46,430
+Those lots explain three quarters of this year's margin loss.
+
+39
+00:01:46,870 --> 00:01:47,970
+Riders noticed:
+
+40
+00:01:47,970 --> 00:01:51,660
+nine thousand tickets filed as 'other' were really battery complaints.
+
+41
+00:01:52,470 --> 00:01:53,550
+Insight three:
+
+42
+00:01:53,570 --> 00:01:56,940
+new riders who hit two or more failed swaps in their first
+
+43
+00:01:56,940 --> 00:01:59,880
+two weeks churn at 15 percent instead of 9.
+
+44
+00:02:00,310 --> 00:02:03,030
+Price plan, channel and partner don't matter.
+
+45
+00:02:03,860 --> 00:02:05,410
+And the peak-pricing pilot?
+
+46
+00:02:05,860 --> 00:02:09,410
+Plus eight rupees a swap, but almost no demand shifted.
+
+47
+00:02:09,880 --> 00:02:12,390
+It's a revenue lever, not a congestion fix.
+
+48
+00:02:12,850 --> 00:02:16,310
+Meanwhile the biggest partner, on a 28 percent discount,
+
+49
+00:02:16,310 --> 00:02:17,670
+is the least profitable.
+
+50
+00:02:18,470 --> 00:02:20,400
+So, our recommendations.
+
+51
+00:02:20,840 --> 00:02:21,310
+One:
+
+52
+00:02:21,310 --> 00:02:24,960
+replace the 36 Gen1 cabinets in the three hot cities
+
+53
+00:02:24,960 --> 00:02:29,630
+before next summer, which avoids about 22,600 failures a year.
+
+54
+00:02:30,090 --> 00:02:30,400
+Two:
+
+55
+00:02:30,400 --> 00:02:33,000
+pull the bad-lot packs that are still in service,
+
+56
+00:02:33,000 --> 00:02:35,320
+replace them, and buy on lot testing,
+
+57
+00:02:35,320 --> 00:02:36,600
+not supplier name.
+
+58
+00:02:37,400 --> 00:02:37,990
+Three:
+
+59
+00:02:38,020 --> 00:02:40,450
+protect every new rider's first fortnight,
+
+60
+00:02:40,490 --> 00:02:43,890
+with healthy packs and an automatic credit after any failure.
+
+61
+00:02:44,340 --> 00:02:44,730
+Four:
+
+62
+00:02:44,730 --> 00:02:48,060
+renegotiate ZipDrop instead of signing an exclusive.
+
+63
+00:02:48,860 --> 00:02:50,940
+Fix the equipment and the batteries,
+
+64
+00:02:50,940 --> 00:02:52,680
+and growth becomes profitable.
+
+65
+00:02:53,100 --> 00:02:53,740
+Thank you.
+

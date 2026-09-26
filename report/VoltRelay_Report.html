@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>VoltRelay Analysis Report · Team WindRocker</title>
+<style>
+@page { size: A4; margin: 16mm 15mm 16mm 15mm; }
+:root { --ink: #111318; --ink2: #4a4d55; --ink3: #7b7e86; --line: #e3e2dd; --blue: #2a78d6; --orange: #eb6834; --aqua: #1baf7a; --red: #e34948; --yellow: #eda100; --paper: #ffffff; --soft: #f5f4f0; --hero: #10131a; --accent: #f5b83d; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+body { font-family: "Segoe UI", -apple-system, Roboto, Arial, sans-serif; color: var(--ink); font-size: 10.2pt; line-height: 1.5; background: var(--paper); }
+.page { page-break-after: always; break-after: page; }
+.page:last-child { page-break-after: auto; }
+h1 { font-size: 25pt; line-height: 1.12; letter-spacing: -0.4px; }
+h2 { font-size: 15.5pt; margin: 0 0 8px; letter-spacing: -0.2px; padding-bottom: 5px; border-bottom: 2px solid var(--ink); }
+h2 .num { color: var(--blue); margin-right: 6px; }
+h3 { font-size: 11.5pt; margin: 12px 0 4px; }
+p { margin: 0 0 7px; }
+ul, ol { margin: 0 0 8px 18px; }
+li { margin-bottom: 3px; }
+b, strong { font-weight: 650; }
+.muted { color: var(--ink2); }
+.small { font-size: 8.8pt; }
+figure { margin: 8px 0 6px; break-inside: avoid; }
+figure img { width: 100%; display: block; border: 1px solid var(--line); border-radius: 4px; }
+figcaption { font-size: 8.5pt; color: var(--ink3); margin-top: 3px; }
+table { width: 100%; border-collapse: collapse; font-size: 8.9pt; margin: 6px 0 10px; break-inside: avoid; }
+th { text-align: left; background: var(--soft); padding: 5px 7px; border-bottom: 1.5px solid var(--ink); font-weight: 650; }
+td { padding: 5px 7px; border-bottom: 1px solid var(--line); vertical-align: top; }
+td.num { text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.cover { height: 265mm; display: flex; flex-direction: column; }
+.cover .band { background: var(--hero); color: #fff; border-radius: 8px; padding: 26px 28px 24px; }
+.cover .kicker { color: var(--accent); font-weight: 700; font-size: 9.5pt; letter-spacing: 1.2px; text-transform: uppercase; margin-bottom: 10px; }
+.cover .sub { color: #b9bec9; margin-top: 10px; font-size: 11pt; }
+.cover .answer { margin-top: 18px; font-size: 12pt; line-height: 1.55; color: #eef0f3; }
+.cover .answer b { color: var(--accent); }
+.kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin: 16px 0; }
+.kpi { border: 1px solid var(--line); border-radius: 6px; padding: 10px 12px; }
+.kpi .v { font-size: 14.5pt; white-space: nowrap; font-weight: 750; font-variant-numeric: tabular-nums; line-height: 1.2; }
+.kpi .l { font-size: 8.3pt; color: var(--ink2); text-transform: uppercase; letter-spacing: 0.4px; }
+.kpi .d { font-size: 8.5pt; color: var(--ink2); }
+.kpi.bad .v { color: var(--red); } .kpi.good .v { color: var(--aqua); }
+.three { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 6px; }
+.driver { border-top: 4px solid var(--red); background: var(--soft); border-radius: 0 0 6px 6px; padding: 10px 12px; font-size: 9.3pt; }
+.driver.o { border-color: var(--orange); } .driver.b { border-color: var(--blue); }
+.driver h4 { font-size: 10.5pt; margin-bottom: 4px; }
+.meta { margin-top: auto; font-size: 9pt; color: var(--ink2); border-top: 1px solid var(--line); padding-top: 10px; display: flex; justify-content: space-between; }
+.callout { background: var(--soft); border-left: 4px solid var(--blue); padding: 8px 12px; border-radius: 0 6px 6px 0; margin: 8px 0 10px; font-size: 9.6pt; break-inside: avoid; }
+.callout.red { border-color: var(--red); }
+.sowhat { background: #fff7e6; border-left: 4px solid var(--accent); padding: 7px 12px; border-radius: 0 6px 6px 0; margin: 6px 0 4px; font-size: 9.5pt; break-inside: avoid; }
+.sowhat b:first-child { text-transform: uppercase; font-size: 8.3pt; letter-spacing: 0.6px; color: #9a6a00; margin-right: 4px; }
+.cols { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.tag { display: inline-block; font-size: 7.8pt; font-weight: 700; padding: 1px 6px; border-radius: 8px; color: #fff; }
+.tag.p { background: var(--red); } .tag.c { background: var(--orange); } .tag.s { background: var(--ink3); } .tag.n { background: #c9c8c2; color: #333; }
+.chain { display: flex; align-items: stretch; gap: 0; margin: 8px 0 10px; font-size: 9pt; }
+.chain div { flex: 1; background: var(--soft); padding: 8px 10px; position: relative; border-right: 3px solid #fff; }
+.chain div b { display: block; font-size: 9.5pt; }
+.chain div:first-child { border-radius: 6px 0 0 6px; } .chain div:last-child { border-radius: 0 6px 6px 0; }
+.rec-n { display: inline-grid; place-items: center; width: 20px; height: 20px; border-radius: 50%; background: var(--blue); color: #fff; font-weight: 700; font-size: 9pt; }
+.footer-note { font-size: 8pt; color: var(--ink3); margin-top: 6px; }
+.verdict-yes { color: var(--aqua); font-weight: 700; } .verdict-part { color: #b37a00; font-weight: 700; } .verdict-no { color: var(--red); font-weight: 700; }
+</style>
+</head>
+<body>
+
+<!-- ============ COVER ============ -->
+<section class="page cover">
+  <div class="band">
+    <div class="kicker">Gradient Learnings Data Analytics Hackathon · Analysis Report</div>
+    <h1>What is really driving VoltRelay's service failures, rider churn and eroding margins?</h1>
+    <div class="sub">Team WindRocker · 18 months of network data (Jan 2024 – Jun 2025) · 3.81M swap attempts · 152 stations · 6 cities</div>
+    <div class="answer">VoltRelay does not have a demand problem or a "too few stations" problem. It has <b>three fixable operational problems</b>: <b>old Gen1 chargers that overheat</b> in the Jaipur, Delhi NCR and Hyderabad summers; <b>three bad battery lots from one supplier (Kyron KY-2407/08/09) that degraded 2.4× faster</b>, which wiped out the price-rise margin gain; and <b>new riders who hit repeated failed swaps in their first fortnight</b> and leave. Fix the equipment, replace the bad packs, protect new riders, and do not lock in the ZipDrop discount.</div>
+  </div>
+  <div class="kpis">
+    <div class="kpi good"><div class="l">Completed swaps / month</div><div class="v">104K → 303K</div><div class="d">2.9× in 18 months</div></div>
+    <div class="kpi good"><div class="l">Revenue / month</div><div class="v">₹6.2M → ₹19.7M</div><div class="d">₹229M over the period</div></div>
+    <div class="kpi bad"><div class="l">Summer failure rate</div><div class="v">8.4%</div><div class="d">vs 3.9% rest of year · peak 11.9%</div></div>
+    <div class="kpi bad"><div class="l">CM / swap, H1 2025</div><div class="v">−₹17.5</div><div class="d">−₹4.2 without the three bad lots</div></div>
+  </div>
+  <div class="three">
+    <div class="driver"><h4>① Heat × Gen1 chargers</h4>Above 45°C a Gen1 cabinet needs <b>156 min</b> (not 88) to charge a pack and runs out of stock in <b>37%</b> of hours. The <b>36 hot-city Gen1 stations</b> handle 32% of summer attempts but cause <b>57.5%</b> of summer failures.</div>
+    <div class="driver o"><h4>② Three bad battery lots</h4>Kyron lots KY-2407/08/09 deliver <b>49 km vs 61 km</b> and cost <b>₹82 vs ₹35</b> in wear per swap; they explain <b>~76%</b> of the H1-2025 margin loss. Kyron's later lots wear normally. Battery/range is now the #1 complaint.</div>
+    <div class="driver b"><h4>③ First-fortnight failures</h4>New riders with <b>2+ failed swaps in their first 14 days</b> churn at <b>15.0% vs 9.0%</b> (adjusted OR 1.58, <b>2.05</b> with early activity controlled). Price plan, channel and partner do not matter.</div>
+  </div>
+  <div class="callout" style="margin-top:14px"><b>How to read this report.</b> Section 1 frames the problem, Section 2 shows how we cleaned and analysed the data, Section 3 answers the six core questions with evidence, Section 4 separates primary from secondary drivers and answers the budget question, and Section 5 lists prioritised, sized actions. Appendix B shows how we tried to break our own findings (confounding, exposure bias, double counting) and what changed as a result. Every chart is reproducible from the two notebooks, and the interactive dashboard lets leadership filter by city, vehicle, charger generation and date.</div>
+  <div class="meta"><span>Deliverables: Colab notebook (runs top to bottom) · interactive dashboard · this report · 3-minute video</span><span>Team WindRocker</span></div>
+</section>
+
+<!-- ============ 1 PROBLEM ============ -->
+<section class="page">
+  <h2><span class="num">1</span>Problem Understanding</h2>
+  <p><b>Business context.</b> VoltRelay runs unmanned battery-swap cabinets for gig and logistics riders (food delivery, quick commerce, e-commerce, cargo, bike taxi) across six Indian cities. Its riders are paid per trip, so <b>every minute at a station is lost income</b>. A failed swap costs VoltRelay a sale and gives the rider a reason to switch networks.</p>
+  <p><b>The paradox.</b> Over 18 months completed swaps and revenue grew strongly, but service failures rose faster, new-rider retention fell and per-swap profitability eroded. In the same window VoltRelay expanded in two waves, raised its base price, piloted peak/off-peak pricing in two cities, onboarded a new battery supplier and renegotiated its largest fleet contract. Leadership must choose between four budget proposals (<b>more stations, more batteries, network-wide peak pricing, a long-term ZipDrop exclusive</b>) and needs to know what is actually driving the outcomes.</p>
+  <h3>How we framed it: one causal chain, not six separate questions</h3>
+  <div class="chain">
+    <div><b>Equipment & assets</b>charger generation, battery supplier/lot, climate</div>
+    <div><b>Operations</b>charge time, charged stock, outages</div>
+    <div><b>Service experience</b>failed / abandoned swaps, range delivered</div>
+    <div><b>Retention</b>does a new rider come back?</div>
+    <div><b>Unit economics</b>revenue, energy, battery wear, site cost</div>
+  </div>
+  <p>For every factor we asked three things: <b>is there a mechanism</b> (not just a correlation), <b>how big is the effect</b>, and <b>how many riders or swaps does it touch</b>. Factors that are large, widespread and consistent across cuts are called <b>primary drivers</b>; real but smaller or narrower effects are <b>secondary/contributing</b>. The data is observational, so we argue <i>likely</i> causes from mechanism, timing and dose-response, and state where that stops.</p>
+  <table>
+    <tr><th style="width:26%">Core question</th><th>What we measured</th><th style="width:30%">Headline answer</th></tr>
+    <tr><td>Q1 Network performance over time</td><td>Monthly completed swaps, revenue, failure rate, fully-loaded contribution margin (CM) per swap</td><td>Volume ↑ 2.9×; failures spike every summer; CM gain from the price rise erased by battery wear</td></tr>
+    <tr><td>Q2 Service failures & experience</td><td>Failure mix by hour, season, city, vehicle class; station concentration; link to hourly stock</td><td>Concentrated: hot cities, evening rush, Gen1 sites, 3W</td></tr>
+    <tr><td>Q3 Stations & geography</td><td>Charger generation, cabinet temperature, charge time, stock-outs, tickets per 1,000 swaps</td><td>Gen1 thermal derating above 45°C is the mechanism</td></tr>
+    <tr><td>Q4 Batteries & equipment</td><td>SoH trajectories by supplier/lot/BMS, delivered km, wear cost per swap</td><td>Kyron lots KY-2407/08/09 are the outlier cohort</td></tr>
+    <tr><td>Q5 Pricing & partners</td><td>Base-price step, peak-pilot difference-in-differences, partner CM per swap</td><td>Pricing = revenue lever, not congestion lever; ZipDrop least profitable</td></tr>
+    <tr><td>Q6 Retention root cause</td><td>First-14-day experience → 30-day churn; lift tables + logistic regression</td><td>Early failures & summer start primary; weak packs contributing</td></tr>
+  </table>
+</section>
+
+<!-- ============ 2 APPROACH ============ -->
+<section class="page">
+  <h2><span class="num">2</span>Analytical Approach</h2>
+  <div class="cols">
+    <div>
+      <h3>Data & tooling</h3>
+      <p>Eight related tables (swap events 3.88M rows; hourly station telemetry 1.49M; riders 20K; batteries 6.5K; tickets 44K; stations 152; city-day context; 12 fleet partners). All joins and aggregations run in <b>DuckDB SQL inside a Colab notebook</b> (Python, pandas, statsmodels, matplotlib), so the full 3.9M-row history is analysed with no sampling. Every number in this report, the dashboard and our LinkedIn post comes from one exported metrics file.</p>
+      <h3>Metric definitions</h3>
+      <ul>
+        <li><b>Service-failure rate</b> = (no charged battery + abandoned queue + system error) ÷ all attempts. Rider cancellations are reported separately.</li>
+        <li><b>Contribution margin per completed swap</b> = revenue − energy (kWh × station tariff) − battery wear − station fixed cost (rent + maintenance ÷ that station's swaps that month).</li>
+        <li><b>Battery wear</b> = purchase cost × SoH lost per swap ÷ (initial SoH − 70% end-of-life), measured per pack inside the data window and applied by supplier and pack type.</li>
+        <li><b>New-rider early churn</b> = signed up on or after 1 Jan 2024 and last swap within 30 days of the first swap (first swap before 1 May 2025, so 60+ days are observable).</li>
+      </ul>
+      <h3>Methods</h3>
+      <ul>
+        <li>Trend, segment and concentration (Pareto) analysis; telemetry joined to swaps at station-hour level.</li>
+        <li><b>Difference-in-differences</b> for the peak-pricing pilot: pilot vs control cities, before vs after, with station and month fixed effects and station-clustered errors.</li>
+        <li><b>Logistic regression</b> of new-rider churn on first-14-day experience, with plan, city and channel controls; χ² tests and dose-response checks.</li>
+        <li>Text re-labelling of ticket comments (English + Hinglish keyword rules, typo-normalised).</li>
+        <li><b>Robustness notebook</b>: load-matched, lot-level, rider-panel and activity-adjusted re-tests of every claim (Appendix B).</li>
+      </ul>
+    </div>
+    <div>
+      <h3>Data cleaning: every brief warning tested</h3>
+      <table>
+        <tr><th>Issue</th><th>What we found</th><th>Decision</th></tr>
+        <tr><td>Test stations STN-TST-01/02</td><td><b>62,031 rows, ₹3.93M billed, 24h a day</b>, not the "small, zero-value" set the brief describes</td><td>Excluded</td></tr>
+        <tr><td>Firmware v3.2.0 clock bug (10 Mar–14 Apr 2025)</td><td>139,490 events logged 5h30m early; billing confirms it (PEAK swaps in peak hours: 12% → 100%)</td><td>+5h30m shift</td></tr>
+        <tr><td>Offline-sync near-duplicates</td><td>Rapid repeats: offline 0.16% vs realtime 0.17%; 0 duplicates under three stricter definitions</td><td>No excess → none dropped</td></tr>
+        <tr><td>km outliers / SoC & SoH &gt;100%</td><td>15,526 odometer resets; 9,853 readings &gt;100%</td><td>NULL / clip to 100</td></tr>
+        <tr><td>City spellings</td><td>21 strings for 6 cities (Bombay, BLR, Gurgaon…)</td><td>Alias map</td></tr>
+        <tr><td>Telemetry gaps</td><td>3.1% hours partial/missing, mostly poor connectivity</td><td>NaN-aware, never 0</td></tr>
+        <tr><td>CSAT not missing at random</td><td>44% response if resolved &lt;24h vs 22% if slower</td><td>Report by bucket</td></tr>
+        <tr><td>Ticket categories</td><td><b>9,460 'other' tickets are range complaints</b></td><td>Re-labelled</td></tr>
+        <tr><td>payment_mode</td><td>Single value for every row, incl. pay-as-you-go</td><td>Unusable; use plan_type</td></tr>
+        <tr><td>Tickets out of window · asset register</td><td>86 tickets outside the window; 1,438 'retired' packs still issued afterwards</td><td>Excluded · flagged</td></tr>
+      </table>
+      <figure><img src="../outputs/figures/f02_firmware_fix.png" alt="Firmware fix"><figcaption>Figure 1. The v3.2.0 cabinets' demand curve lines up with unaffected stations only after the +5h30m correction.</figcaption></figure>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 3 INSIGHTS Q1 ============ -->
+<section class="page">
+  <h2><span class="num">3</span>Key Insights · Q1 Network performance over time</h2>
+  <figure><img src="../outputs/figures/f01_performance_trend.png" alt="Performance trend"><figcaption>Figure 2. Monthly completed swaps, revenue, service-failure rate and fully-loaded CM per swap. Dotted lines mark the price rise, Kyron at scale, the pricing pilot and the ZipDrop amendment.</figcaption></figure>
+  <div class="cols">
+    <div>
+      <p><b>The four metrics tell different stories.</b> Volume grew steadily (104K → 303K completed swaps per month) and revenue kept pace (₹6.2M → ₹19.7M). Failures, however, sit at ~3.9% for nine months of the year and <b>spike every April–June</b> (11.9% in May 2024, 9.5% in May 2025), which is seasonal capacity stress, not gradual decay. Contrary to the brief, failures did not outgrow swaps: H1-2025 failure counts rose <b>2.1×</b> against <b>2.4×</b> for completed swaps. The summer problem has not worsened, but it has not been fixed either.</p>
+      <p><b>Margin:</b> the July 2024 price rise lifted CM from −₹19.2 to −₹9.6 per swap, then CM <b>fell straight back to −₹18.2 from September 2024</b>, the month the bad Kyron lots arrived at scale. Re-pricing those packs at a normal wear rate puts H1-2025 CM at <b>−₹4.2</b> instead of −₹17.5: about <b>76%</b> of the loss is that one cohort.</p>
+    </div>
+    <div>
+      <figure style="margin-top:0"><img src="../outputs/figures/f03_margin_bridge.png" alt="Margin bridge"><figcaption>Figure 3. CM bridge, H1-2024 → H1-2025: +₹4.9 from price and +₹6.5 from scale, almost all absorbed by ₹13.0 of extra battery wear. The +₹3.4 energy step is not a gain: kWh per swap fell 2.02 → 1.69 because aged packs hold less charge.</figcaption></figure>
+    </div>
+  </div>
+  <div class="sowhat"><b>So what</b> Growth hides two separate problems: a seasonal <i>capacity</i> problem (failures) and an <i>asset</i> problem (margin, mostly one bad battery cohort). Neither is solved by more volume or more stations of the same kind. <span class="muted small">Sensitivity: the CM level depends on the wear assumption (with 30% salvage, CM went +₹2.3 → −₹2.5), but the direction and the driver hold under every assumption; before battery wear, margin per swap rose from ₹20 to ₹34.</span></div>
+</section>
+
+<!-- ============ Q2 + Q3 ============ -->
+<section class="page">
+  <h2><span class="num">3</span>Key Insights · Q2 Service failures & Q3 Stations</h2>
+  <figure><img src="../outputs/figures/f04_failure_heatmap.png" alt="Failure heatmap"><figcaption>Figure 4. Summer failure rate by city and hour (timestamps corrected). Jaipur, Delhi NCR and Hyderabad fail 9–12% all day and 13–19% in the 19–22h rush; Bengaluru and Mumbai stay near 4%.</figcaption></figure>
+  <figure><img src="../outputs/figures/f06_heat_mechanism.png" alt="Heat mechanism"><figcaption>Figure 5. Mechanism from hourly telemetry: Gen1 charge time and stock-outs explode above a 45°C cabinet temperature; Gen3 is unaffected.</figcaption></figure>
+  <div class="cols">
+    <div>
+      <ul>
+        <li><b>Supply, not software:</b> in summer "no charged battery" rises 2.4% → 5.5% and queue abandonment 1.3% → 2.7%, while system errors and cancellations are unchanged. When a cabinet's stock hits zero, failure doubles (11.2% vs 5.4%).</li>
+        <li><b>Concentrated:</b> the <b>36 hot-city Gen1 stations handle 32% of summer attempts but cause 57.5% of summer failures</b>; every one of the worst 20% of stations is Gen1.</li>
+        <li><b>3W:</b> 3W riders fail 12.2% in summer vs 7.9% for 2W, and the gap exists all year (8.6% vs 3.3%). It is not about 3W slots: failure is the same at stations with and without them.</li>
+      </ul>
+    </div>
+    <div>
+      <ul>
+        <li><b>Equipment, not just climate or load:</b> <i>within</i> Delhi NCR, Gen1 fails 16.5% of summer attempts vs 5.3% at Gen3 (Jaipur 16.8% vs 5.3%). At every load level Gen1 fails 14–16% vs ~5% for Gen3, and Gen3 sites are actually busier. In mild Bengaluru and Mumbai all generations perform the same.</li>
+        <li>Location type, host type and connectivity move failure by ≤1 pt. Complaints follow the same map (Jaipur 14.5 vs Mumbai 8.9 tickets per 1,000 swaps).</li>
+      </ul>
+    </div>
+  </div>
+  <div class="sowhat"><b>So what</b> Service quality is not spread evenly. It is a <b>Gen1-in-hot-cities</b> problem: Gen1 is 48% of attempts but 66% of summer failures, and all 51 Gen1 cabinets are still in service after two expansion waves. Failed riders don't retry, so every failure is a lost sale (≈₹14.3M over 18 months).</div>
+</section>
+
+<!-- ============ Q4 ============ -->
+<section class="page">
+  <h2><span class="num">3</span>Key Insights · Q4 Batteries & equipment</h2>
+  <figure><img src="../outputs/figures/f08_battery_health.png" alt="Battery health"><figcaption>Figure 6. Left: SoH of 2W packs handed to riders. Kyron lots KY-2407/08/09 fall through the 70% end-of-life line within a year of entering service. Right: delivered range falls steadily with SoH.</figcaption></figure>
+  <table>
+    <tr><th>Supplier · 2W pack</th><th class="num">Packs</th><th class="num">SoH lost / 1,000 swaps</th><th class="num">Wear ₹ / swap</th><th class="num">km per swap</th><th class="num">Current SoH</th><th class="num">Retired</th></tr>
+    <tr><td>Cellora</td><td class="num">3,035</td><td class="num">31.7</td><td class="num">₹34.7</td><td class="num">60.9</td><td class="num">80.0%</td><td class="num">0</td></tr>
+    <tr><td>Amptek</td><td class="num">1,098</td><td class="num">31.6</td><td class="num">₹34.6</td><td class="num">60.9</td><td class="num">80.0%</td><td class="num">0</td></tr>
+    <tr><td><b>Kyron (lots KY-2407/08/09)</b></td><td class="num">1,385</td><td class="num"><b>75.2</b></td><td class="num"><b>₹82.3</b></td><td class="num"><b>48.6</b></td><td class="num"><b>60.5%</b></td><td class="num"><b>1,385 (all)</b></td></tr>
+  </table>
+  <div class="cols">
+    <div><ul>
+      <li><b>A lot defect, not a supplier one:</b> the three bad lots lost SoH 2.4× faster, but Kyron's later 3W lots (KY-2410 to 2418) lose 33 points per 1,000 swaps, the same as Cellora. <b>BMS firmware makes no difference</b>, and the bad packs' SoH is identical in all six cities, so it is not heat.</li>
+      <li>All 1,438 retired packs are Kyron, retired after 7–9 months (<b>₹44.3M</b> of 2W packs at purchase cost; the premature part is ≈₹28.7M). The retirement is <b>on paper only</b>: they were issued 33,761 more times, and 22% of June-2025 swaps used a pack below 70% SoH.</li>
+    </ul></div>
+    <div><ul>
+      <li>Riders feel it: 2W range falls from ~67 km at 95% SoH to ~37 km at 60%, and at the <i>same</i> SoH a bad-lot pack delivers 11% fewer km. Battery/range tickets (incl. 9,460 mislabelled 'other' comments like <i>"scooter weak lag raha hai"</i>) rose from 308 per quarter to <b>6,167</b>, and are now <b>37% of all tickets</b>.</li>
+    </ul></div>
+  </div>
+  <div class="sowhat"><b>So what</b> One battery cohort is the <b>primary driver of margin erosion</b> (~76% of the H1-2025 loss) and a contributor to complaints and churn. "More batteries" only helps as <i>replacements</i> for the 1,385 bad 2W packs (25% of the 2W fleet), bought on lot acceptance tests rather than supplier name.</div>
+</section>
+
+<!-- ============ Q5 ============ -->
+<section class="page">
+  <h2><span class="num">3</span>Key Insights · Q5 Pricing & partner economics</h2>
+  <figure><img src="../outputs/figures/f09_pricing_pilot.png" alt="Pricing pilot"><figcaption>Figure 8. Independent riders, pilot cities (Bengaluru, Pune) vs four control cities. Revenue per swap jumps at pilot start; peak-hour share barely moves.</figcaption></figure>
+  <table>
+    <tr><th>Intervention</th><th>Evidence</th><th>Effect</th><th>Who it hits</th></tr>
+    <tr><td>Base price ↑ (1 Jul 2024: 2W ₹60→65, 3W ₹100→110)</td><td>Before/after</td><td>+~₹5 revenue per swap; volume growth unchanged</td><td>Everyone (partners at their discount)</td></tr>
+    <tr><td>Peak/off-peak pilot (BLR, PUN, Oct 2024)</td><td>Difference-in-differences, station + month FE, clustered SE</td><td><b>+₹8.0 per swap</b> (95% CI 7.7–8.3); peak share <b>−2.6 pts</b>; failure rate <b>+0.05 pts (no change)</b>; swaps per rider <b>−4.6%</b>, so revenue per rider +7.9%</td><td>Independents; surcharge-exempt partners (ZipDrop, Swiggle Go) untouched</td></tr>
+    <tr><td>ZipDrop amendment (Nov 2024: 12% → 28%, no peak surcharge)</td><td>Same partner before/after</td><td>Revenue/swap ₹57.5 → <b>₹48.6</b>; CM/swap −₹19.7 → <b>−₹31.6</b></td><td>15% of network volume</td></tr>
+  </table>
+  <div class="cols">
+    <div><figure style="margin-top:0"><img src="../outputs/figures/f10_partner_margin.png" alt="Partner margin"><figcaption>Figure 9. CM per swap by partner, H1 2025.</figcaption></figure></div>
+    <div>
+      <ul>
+        <li>Gig riders cannot move their shifts, so price is a <b>revenue lever, not a congestion lever</b>. The pilot left summer failures untouched, and some swaps simply left the network.</li>
+        <li><b>The largest partner is the least valuable:</b> ZipDrop earns −₹31.1/swap vs −₹13.8 for the best partner (DabbaXpress) and −₹9.7 for independent riders. It loses −₹19.9 per swap even before site costs, and the deeper discount bought no volume (share 15.1% → 15.5%). The extra discount costs <b>≈₹5.7M a year</b>.</li>
+        <li>3W cargo partners are also margin-negative despite ₹110 pricing: 3W packs carry ₹77–81 of wear per swap.</li>
+      </ul>
+    </div>
+  </div>
+  <div class="sowhat"><b>So what</b> Pricing and contracts affect segments very differently. Peak pricing earns more from independents; the ZipDrop deal gives away more than any other partner term.</div>
+</section>
+
+<!-- ============ Q6 ============ -->
+<section class="page">
+  <h2><span class="num">3</span>Key Insights · Q6 Root cause of new-rider churn</h2>
+  <figure><img src="../outputs/figures/f11_churn_drivers.png" alt="Churn drivers"><figcaption>Figure 10. Left: 30-day churn with and without each first-2-week experience (13,797 new riders; base churn 9.9%). Right: adjusted odds ratios from a logistic regression with plan, city and channel controls.</figcaption></figure>
+  <figure><img src="../outputs/figures/f12_churn_dose_response.png" alt="Dose response"><figcaption>Figure 11. Dose-response and cohort curves: churn jumps once a rider suffers 2+ early failures; weaker packs raise churn; riders who start in Q2 (summer) leave fastest.</figcaption></figure>
+  <table>
+    <tr><th style="width:16%">Tier</th><th style="width:30%">Factor</th><th>Evidence</th></tr>
+    <tr><td><span class="tag p">PRIMARY</span></td><td><b>2+ failed swaps in the first 14 days</b></td><td>Churn 15.0% vs 9.0%; adjusted OR <b>1.58</b> (95% CI 1.36–1.82, p&lt;0.001), <b>2.05</b> once early riding activity is controlled (heavy riders see more failures but churn less); riders whose early failure rate topped 20% churned at 23.3%; 16% of new riders exposed</td></tr>
+    <tr><td><span class="tag p">PRIMARY</span></td><td><b>Starting in summer (Apr–Jun)</b></td><td>Churn 13.6% vs 8.8%; OR <b>1.43</b> even controlling for early failures; the April-2025 intake churned worst of all (16.8% vs 11.9% a year earlier)</td></tr>
+    <tr><td><span class="tag c">CONTRIBUTING</span></td><td><b>Weak packs (avg SoH &lt; 85%)</b></td><td>Churn 12.9% vs 9.5%; OR <b>1.23</b> (p=0.02), 1.46 with activity controlled; only 2025 riders ever received such packs</td></tr>
+    <tr><td><span class="tag s">SECONDARY</span></td><td>Kyron-heavy packs, nearby competitor, 3W, raising a ticket</td><td>1.1–1.2× raw lift; not significant once failures and pack health are controlled</td></tr>
+    <tr><td><span class="tag n">NOT A DRIVER</span></td><td>Price plan, signup channel, fleet partner, KYC, Gen1 home station, competitor promotions</td><td>No significant effect (promotions: OR 0.90, p=0.63). Gen1 acts <i>through</i> failures (mediator), not on its own</td></tr>
+  </table>
+  <div class="sowhat"><b>So what</b> Retention is decided by the first two weeks of <i>operations</i>, not by price or marketing. The same Gen1-in-summer and weak-battery problems behind Q2–Q4 are what push new riders out. <span class="muted small">(Churn is noisy, pseudo-R² 0.015: these are the controllable levers, not the full story. The published odds ratios are lower bounds.)</span></div>
+</section>
+
+<!-- ============ 4 FINDINGS ============ -->
+<section class="page">
+  <h2><span class="num">4</span>Business Findings: primary vs secondary drivers</h2>
+  <table>
+    <tr><th style="width:4%">#</th><th style="width:38%">Finding</th><th style="width:22%">Role</th><th>Why we believe it</th></tr>
+    <tr><td>1</td><td>Gen1 chargers derate above 45°C → stock-outs → summer failures in Jaipur, Delhi NCR, Hyderabad</td><td><span class="tag p">PRIMARY</span> service failures</td><td>Mechanism visible in telemetry; holds <i>within</i> cities and at every load level; sharp threshold (4.1% → 18.7% failures as the day's cabinet peak passes 43–46°C); repeats in both summers</td></tr>
+    <tr><td>2</td><td>Kyron lots KY-2407/08/09 degraded 2.4× faster → lower range, 2.4× wear cost, ~76% of the H1-2025 margin loss</td><td><span class="tag p">PRIMARY</span> margin erosion · <span class="tag c">CONTRIB.</span> churn, complaints</td><td>Lot-level split (later Kyron lots are normal); same SoH loss in every city; BMS ruled out; timing matches the Sep-2024 margin drop</td></tr>
+    <tr><td>3</td><td>Early failures and summer starts drive new-rider churn</td><td><span class="tag p">PRIMARY</span> churn</td><td>Logistic regression with controls, stronger when early activity is controlled; dose-response by failure rate</td></tr>
+    <tr><td>4</td><td>ZipDrop's 28% discount makes the largest partner the least profitable</td><td><span class="tag s">SECONDARY</span> network margin · key for partner strategy</td><td>Before/after on the same partner; negative even before site costs; the discount bought no volume</td></tr>
+    <tr><td>5</td><td>Peak pricing adds revenue but barely shifts demand and trims swaps per rider 4.6%</td><td><span class="tag s">SECONDARY</span> revenue lever only</td><td>Difference-in-differences with fixed effects; rider-month panel</td></tr>
+    <tr><td>6</td><td>Expansion waves added capacity evenly (+60–80% per city), not where failures were</td><td><span class="tag c">CONTRIB.</span> why summer 2025 ≈ 2024</td><td>Gen1 hotspot failure rates unchanged year on year (Delhi Gen1 16.4% → 16.6%)</td></tr>
+    <tr><td>7</td><td>Data issues: billed test stations, firmware clock bug, broken payment_mode, mislabelled tickets, 'retired' packs still in service</td><td>Governance</td><td>Direct checks; the ticket mislabelling hid the battery problem for months</td></tr>
+  </table>
+  <div class="callout red"><b>The budget question, answered:</b> the evidence does <b>not</b> support blanket growth. Of the four proposals, <span class="verdict-yes">batteries</span> (as replacements for the bad lots) and <span class="verdict-part">stations</span> (as Gen1→Gen3 swaps in three cities, cooling first) are supported; <span class="verdict-part">peak pricing</span> only as a revenue tool after the capacity fix; the <span class="verdict-no">ZipDrop exclusive</span> is not.</div>
+  <table>
+    <tr><th style="width:22%">Proposal</th><th style="width:20%">Verdict</th><th>Evidence</th></tr>
+    <tr><td>More stations</td><td class="verdict-part">Partly: only Gen1 → Gen3 replacement</td><td>New waves went everywhere; all 51 Gen1 cabinets remain and cause 66% of summer failures. Gen1 fails ~3× Gen3 at every load level, so more Gen1-style sites would not fix the heat problem.</td></tr>
+    <tr><td>More batteries</td><td class="verdict-yes">Yes, as replacements</td><td>Replace the 1,385 bad-lot 2W packs (25% of the 2W fleet, ≈₹44M): 49 km vs 61 km and ₹82 vs ₹35 wear per swap. Buy on lot acceptance tests, not supplier name; do not add packs for growth.</td></tr>
+    <tr><td>Network-wide peak pricing</td><td class="verdict-part">Not as proposed</td><td>+₹8.0/swap, but riders swap 4.6% less, only −2.6 pts demand shift and no failure reduction; exempt partners dodge it.</td></tr>
+    <tr><td>ZipDrop long-term exclusive</td><td class="verdict-no">No</td><td>15% of volume at −₹31/swap, the lowest margin on the network, and −₹19.9 even before site costs. An exclusive locks in the 28% discount.</td></tr>
+  </table>
+  <p class="small muted"><b>Limitations.</b> Observational (simulated) data: we show consistent associations backed by mechanism, timing and dose-response, not proof of causation. CM uses modelled battery wear and site costs, so its level is assumption-sensitive while its trend is not. Churn is defined on activity (no explicit cancellation). The pricing effect is estimated on independent riders only. Appendix B lists every claim we re-tested and what changed.</p>
+</section>
+
+<!-- ============ 5 RECOMMENDATIONS ============ -->
+<section class="page">
+  <h2><span class="num">5</span>Actionable Recommendations</h2>
+  <table>
+    <tr><th style="width:4%"></th><th style="width:34%">Action</th><th style="width:12%">Owner</th><th style="width:22%">Expected impact (sized from data)</th><th>KPI to track</th></tr>
+    <tr><td><span class="rec-n">1</span></td><td><b>Replace the 36 Gen1 cabinets in Jaipur, Delhi NCR and Hyderabad with Gen3 before April.</b> Start with cooling retrofits on the same cabinets and pre-position charged packs before 12:00 on heat-alert days.</td><td>Network Ops</td><td><b>≈22,600 failures avoided / yr</b> (39% of summer failures), ≈₹1.4M revenue; cooling by 5°C alone ≈14,400 (64% of that)</td><td>Summer failure rate at these sites (16% → ~5%); days with cabinet peak above 45°C</td></tr>
+    <tr><td><span class="rec-n">2</span></td><td><b>Pull and replace the bad-lot packs.</b> Remove the 1,438 'retired' Kyron packs still in use, replace the 1,385 2W packs before summer, claim warranty on KY-2407/08/09, and buy on lot acceptance tests, not supplier name.</td><td>Procurement / Asset</td><td><b>≈₹44M</b> of replacement packs; ≈₹28.7M premature asset loss not repeated; +12 km per swap for affected riders</td><td>Wear ₹/swap by lot; share of swaps below 70% SoH; battery tickets</td></tr>
+    <tr><td><span class="rec-n">3</span></td><td><b>Protect every new rider's first fortnight:</b> route new riders to healthy packs (screen by lot, since SoH readings flatter the bad lots), auto-credit after any failed swap, and hold back summer acquisition in hot cities until #1 is done.</td><td>CX / Growth</td><td>≈135–156 more riders kept per 13.8K new riders (≈1 pt churn), compounding with #1</td><td>30-day churn of new riders; % with 2+ early failures</td></tr>
+    <tr><td><span class="rec-n">4</span></td><td><b>Renegotiate ZipDrop; do not sign an exclusive on current terms.</b> Move to a volume-tiered discount capped near 15%, make the peak surcharge billable, and tie discounts to off-peak volume.</td><td>Partnerships / Finance</td><td>Up to <b>≈₹5.7M / yr</b> margin recovered</td><td>CM per ZipDrop swap vs network average</td></tr>
+    <tr><td><span class="rec-n">5</span></td><td><b>Keep peak pricing as a revenue tool.</b> Extend it to the four control cities for independent riders after #1 lowers summer failures; deepen off-peak discounts if shifting demand is the aim.</td><td>Pricing</td><td><b>≈₹3.7M / yr</b> extra revenue, net of 4.6% fewer swaps per rider</td><td>Revenue per rider; swaps per rider; churn of independents in rollout cities</td></tr>
+    <tr><td><span class="rec-n">6</span></td><td><b>Fix the data plumbing:</b> exclude test cabinets, patch firmware v3.2.0, repair payment_mode, reconcile the asset register with cabinet logs, add a battery/range ticket category and a lot-level SoH alert.</td><td>Data / Eng.</td><td>Battery problems visible ~6 months earlier; trustworthy KPIs</td><td>Share of 'other' tickets; clock-drift alerts</td></tr>
+  </table>
+  <h3>90-day roadmap</h3>
+  <div class="cols">
+    <div><ul>
+      <li><b>Weeks 0–4:</b> pull the 'retired' packs and order replacements on lot tests; warranty claim; new-rider pack routing and auto-credit; ticket taxonomy.</li>
+      <li><b>Weeks 4–8:</b> Gen3 procurement and site survey for the 36 hot-city Gen1 cabinets; cooling retrofits as a stop-gap; ZipDrop renegotiation.</li>
+    </ul></div>
+    <div><ul>
+      <li><b>Weeks 8–12:</b> first Gen3 swaps in Jaipur and Delhi NCR before the heat; summer inventory playbook; decide the pricing rollout on post-fix data.</li>
+      <li><b>Governance:</b> one monthly dashboard (this one) owned by Ops, with summer failure rate at Gen1 sites, wear ₹/swap by supplier and new-rider 30-day churn as north-star KPIs.</li>
+    </ul></div>
+  </div>
+</section>
+
+<!-- ============ APPENDIX ============ -->
+<section class="page">
+  <h2><span class="num">A</span>Appendix: supporting evidence</h2>
+  <div class="cols">
+    <figure><img src="../outputs/figures/f05_station_pareto.png" alt="Pareto"><figcaption>Figure A1. Stations ranked by failures; summer failure rate coloured by generation.</figcaption></figure>
+    <figure><img src="../outputs/figures/f07_station_attributes.png" alt="Station attributes"><figcaption>Figure A2. Failure rate by station attribute: generation and city dominate; location, host and connectivity matter little.</figcaption></figure>
+  </div>
+  <h3>Unit economics, network average per completed swap (Jan 2024 – Jun 2025)</h3>
+  <table>
+    <tr><th>Revenue</th><th>Energy</th><th>Battery wear</th><th>Station fixed</th><th>Contribution margin</th></tr>
+    <tr><td class="num">₹63.9</td><td class="num">−₹19.5</td><td class="num">−₹48.6</td><td class="num">−₹13.4</td><td class="num"><b>−₹17.6</b></td></tr>
+  </table>
+  <h3>CM sensitivity to the battery-wear assumption</h3>
+  <table>
+    <tr><th>Period</th><th class="num">Base (70% end-of-life)</th><th class="num">With 30% salvage value</th><th class="num">Before battery wear</th></tr>
+    <tr><td>H1 2024</td><td class="num">−₹19.2</td><td class="num">−₹7.4</td><td class="num">₹20.3</td></tr>
+    <tr><td>Jul–Aug 2024 (after price rise)</td><td class="num">−₹9.6</td><td class="num">+₹2.3</td><td class="num">₹29.8</td></tr>
+    <tr><td>Sep 2024 – Jun 2025 (bad lots at scale)</td><td class="num">−₹18.2</td><td class="num">−₹2.5</td><td class="num">₹34.1</td></tr>
+  </table>
+  <p class="small muted">If the bad-lot packs had worn like a normal pack, H1-2025 CM would be −₹4.2 instead of −₹17.5 (base case).</p>
+  <h3>Reproducibility</h3>
+  <p class="small">Notebook <b>VoltRelay_Analysis_WindRocker.ipynb</b> runs top to bottom in Google Colab (mounts Drive, reads the CSV or CSV.GZ files) or locally, and regenerates every figure, the dashboard data and <code>outputs/metrics.json</code>. The companion <b>VoltRelay_Robustness_Checks_WindRocker.ipynb</b> re-tests every headline claim and writes <code>outputs/audit_metrics.json</code>. Heavy aggregation in DuckDB; statistics in statsmodels/scipy. Synthetic dataset, generation seed 59500.</p>
+  <p class="footer-note">Team WindRocker · Gradient Learnings Data Analytics Hackathon · All company names are fictional.</p>
+</section>
+
+<!-- ============ APPENDIX B ROBUSTNESS ============ -->
+<section class="page">
+  <h2><span class="num">B</span>Appendix: how we tried to break our own findings</h2>
+  <p>For every headline number we asked four questions: could something else produce the same pattern (<b>confounding</b>)? Is a "concentration" just who was observed longest (<b>exposure bias</b>)? Are two numbers really the same money (<b>double counting</b>)? Does a sizing assume nobody reacts (<b>behavioural response</b>)? The full tests are in the robustness notebook.</p>
+  <div class="cols">
+    <figure style="margin-top:0"><img src="../outputs/figures/a05_wear_by_lot.png" alt="Wear by lot"><figcaption>Figure B1. SoH lost per 1,000 swaps by supplier and lot. Kyron's later 3W lots wear like Cellora and Amptek: the defect is in three lots.</figcaption></figure>
+    <figure style="margin-top:0"><img src="../outputs/figures/a07_cm_without_bad_lots.png" alt="CM without bad lots"><figcaption>Figure B2. Monthly CM per swap as modelled vs re-priced at a normal pack's wear rate: most of the post-Sep-2024 erosion is the bad lots.</figcaption></figure>
+  </div>
+  <table>
+    <tr><th style="width:27%">Claim</th><th style="width:47%">What we tested and found</th><th>Verdict</th></tr>
+    <tr><td>Gen1 × heat drives summer failures</td><td>Gen1 fails 14–16% in every load quartile vs ~5% for Gen3 (Gen3 is busier); outages, offline chargers and quarantined packs are negligible</td><td class="verdict-yes">Holds</td></tr>
+    <tr><td>"Worst 20% of stations = 43% of failures"</td><td>They carry 31% of attempts and were open all 18 months (1.4× concentration). Sharper: 36 hot-city Gen1 stations = 57.5% of summer failures</td><td class="verdict-part">Reframed</td></tr>
+    <tr><td>"3W fails more because fewer stations have 3W slots"</td><td>3W failure is identical with or without listed 3W slots, and the gap exists all year; 57% of 3W swaps happen at "zero-slot" stations</td><td class="verdict-no">Dropped</td></tr>
+    <tr><td>"Stop buying Kyron"</td><td>Only lots KY-2407/08/09 are bad; later Kyron lots wear normally (33 vs 33 SoH points per 1,000 swaps)</td><td class="verdict-part">Now a lot problem</td></tr>
+    <tr><td>₹48M written off + ₹34M/yr excess wear</td><td>Same money counted twice. 2W packs: ₹44.3M gross, ≈₹28.7M premature; no recurring saving once the packs are pulled</td><td class="verdict-part">Corrected</td></tr>
+    <tr><td>+₹3.4 energy saving in the margin bridge</td><td>kWh per swap fell 2.02 → 1.69 because packs aged (SoH 97% → 81%): riders got less energy</td><td class="verdict-part">Relabelled</td></tr>
+    <tr><td>Pricing rollout +₹6.1M a year</td><td>Pilot riders swapped 4.6% less often (rider-month panel, rider + month fixed effects); revenue per rider +7.9%, not +11.8%</td><td class="verdict-part">≈₹3.7M</td></tr>
+    <tr><td>Churn OR 1.58 for 2+ early failures</td><td>Heavy riders see more failures but churn less; controlling for activity gives 2.05 (weak packs 1.23 → 1.46)</td><td class="verdict-yes">Understated</td></tr>
+    <tr><td>Firmware fix, near-duplicates</td><td>Billing confirms the +5h30m shift (12% → 100% of PEAK swaps in peak hours); 0 duplicates under three stricter definitions</td><td class="verdict-yes">Holds</td></tr>
+    <tr><td>Competitor activity</td><td>Promotions: OR 0.90 (p=0.63); stations near a new competitor did not lose volume</td><td class="verdict-yes">Not a driver</td></tr>
+  </table>
+  <p class="footer-note">Team WindRocker · Gradient Learnings Data Analytics Hackathon · All company names are fictional.</p>
+</section>
+</body>
+</html>

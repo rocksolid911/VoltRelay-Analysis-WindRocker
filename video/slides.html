@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>VoltRelay Video Slides · WindRocker</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { width: 1920px; height: 1080px; overflow: hidden; background: #10131a; }
+body { font-family: "Segoe UI", -apple-system, Roboto, Arial, sans-serif; color: #fff; }
+.slide { display: none; width: 1920px; height: 1080px; padding: 70px 110px 0; position: relative; flex-direction: column; }
+.slide.on { display: flex; }
+.top { display: flex; justify-content: space-between; align-items: center; font-size: 24px; color: #7e8594; margin-bottom: 34px; }
+.top .sec { font-weight: 700; letter-spacing: 3px; text-transform: uppercase; color: #f5b83d; }
+.top .dots span { display: inline-block; width: 40px; height: 6px; border-radius: 3px; background: #2a303c; margin-left: 8px; }
+.top .dots span.a { background: #f5b83d; }
+h1 { font-size: 92px; line-height: 1.05; letter-spacing: -2px; font-weight: 800; }
+h2 { font-size: 62px; line-height: 1.1; letter-spacing: -1px; font-weight: 800; margin-bottom: 28px; }
+.hl { color: #f5b83d; } .red { color: #ff6b66; } .grn { color: #3fd39c; } .mut { color: #aeb4c0; }
+.lead { font-size: 36px; line-height: 1.4; color: #c9ced8; margin-top: 26px; max-width: 1500px; }
+.stats { display: flex; gap: 28px; margin-top: 36px; }
+.stat { flex: 1; background: #1c212b; border-radius: 22px; padding: 30px 34px; }
+.stat .v { font-size: 72px; font-weight: 800; letter-spacing: -1.5px; line-height: 1.05; }
+.stat .l { font-size: 27px; color: #aeb4c0; margin-top: 10px; line-height: 1.3; }
+.chart { background: #fff; border-radius: 20px; padding: 16px; display: flex; justify-content: center; align-items: center; }
+.chart img { max-width: 100%; max-height: 100%; object-fit: contain; display: block; }
+.row { display: flex; gap: 34px; align-items: stretch; }
+.side { width: 470px; flex: none; display: flex; flex-direction: column; gap: 22px; }
+.side .stat { flex: none; }
+.cards { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; margin-top: 30px; }
+.card { background: #1c212b; border-radius: 22px; padding: 30px; border-top: 6px solid #f5b83d; }
+.card .t { font-size: 34px; font-weight: 800; margin-bottom: 12px; line-height: 1.15; }
+.card .d { font-size: 26px; color: #aeb4c0; line-height: 1.35; }
+.chain { display: flex; align-items: center; gap: 18px; margin-top: 60px; }
+.chain .node { flex: 1; background: #1c212b; border-radius: 22px; padding: 36px 26px; text-align: center; }
+.chain .node .t { font-size: 40px; font-weight: 800; }
+.chain .node .d { font-size: 25px; color: #aeb4c0; margin-top: 10px; line-height: 1.3; }
+.chain .arr { font-size: 56px; color: #f5b83d; font-weight: 800; }
+ul.recs { list-style: none; margin-top: 10px; }
+ul.recs li { font-size: 40px; line-height: 1.3; padding: 26px 0 26px 92px; position: relative; border-bottom: 2px solid #252b36; }
+ul.recs li .n { position: absolute; left: 0; top: 22px; width: 62px; height: 62px; border-radius: 50%; background: #f5b83d; color: #111; font-weight: 800; display: grid; place-items: center; font-size: 34px; }
+ul.recs li .s { display: block; font-size: 28px; color: #aeb4c0; margin-top: 6px; }
+.center { align-items: center; justify-content: center; text-align: center; padding-bottom: 150px; }
+.bolt { font-size: 130px; line-height: 1; margin-bottom: 26px; }
+.by { font-size: 30px; color: #7e8594; margin-top: 40px; letter-spacing: 1px; }
+</style>
+</head>
+<body>
+
+<!-- 1 · Problem -->
+<section class="slide center" data-sec="0">
+  <div class="bolt">⚡</div>
+  <h1>VoltRelay grew fast.</h1>
+  <div class="stats" style="width:1300px">
+    <div class="stat"><div class="v hl">2.9×</div><div class="l">completed swaps per month<br>104K → 303K</div></div>
+    <div class="stat"><div class="v hl">₹6.2M → ₹19.7M</div><div class="l">monthly revenue<br>in eighteen months</div></div>
+  </div>
+</section>
+
+<!-- 2 -->
+<section class="slide" data-sec="0">
+  <h2>…but three things went <span class="red">wrong</span></h2>
+  <div class="row" style="height:660px">
+    <div class="chart" style="flex:1"><img src="../outputs/figures/f01_performance_trend.png"></div>
+    <div class="side">
+      <div class="stat"><div class="v red">11.9%</div><div class="l">failed swaps at the May 2024 peak (baseline 3.9%)</div></div>
+      <div class="stat"><div class="v red">9.9%</div><div class="l">of new riders churn within 30 days</div></div>
+      <div class="stat"><div class="v red">−₹18.2</div><div class="l">margin per swap from Sep-24, vs −₹9.6 after the price rise</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- 3 -->
+<section class="slide" data-sec="0">
+  <h2>Four budget proposals are on the table</h2>
+  <div class="cards">
+    <div class="card"><div class="t">New stations</div><div class="d">Expand capacity in the busiest cities</div></div>
+    <div class="card"><div class="t">New batteries</div><div class="d">Buy more packs to cut stock-outs</div></div>
+    <div class="card"><div class="t">Peak pricing</div><div class="d">Roll the pilot out network-wide</div></div>
+    <div class="card"><div class="t">ZipDrop exclusive</div><div class="d">Deepen the biggest partner deal</div></div>
+  </div>
+  <p class="lead" style="margin-top:60px">Our job: find what is <span class="hl">actually driving</span> the outcomes before any money is spent.</p>
+</section>
+
+<!-- 4 · Approach -->
+<section class="slide" data-sec="1">
+  <h2>We analysed <span class="hl">3.9 million</span> swap attempts</h2>
+  <div class="cards" style="grid-template-columns:repeat(5,1fr)">
+    <div class="card"><div class="t">Swaps</div><div class="d">Every attempt, success or failure</div></div>
+    <div class="card"><div class="t">Telemetry</div><div class="d">Hourly station temperature, stock, charge time</div></div>
+    <div class="card"><div class="t">Batteries</div><div class="d">Pack health, supplier, retirements</div></div>
+    <div class="card"><div class="t">Riders</div><div class="d">Profiles, plans, partners, churn</div></div>
+    <div class="card"><div class="t">Tickets</div><div class="d">Support text in English and Hinglish</div></div>
+  </div>
+  <p class="lead" style="margin-top:60px">Built in <b style="color:#fff">DuckDB</b> and <b style="color:#fff">Python</b>: one notebook that runs top to bottom.</p>
+</section>
+
+<!-- 5 -->
+<section class="slide" data-sec="1">
+  <h2>First, we cleaned</h2>
+  <div class="stats">
+    <div class="stat"><div class="v hl">₹3.93M</div><div class="l">billed by 2 test stations, removed (62,031 rows)</div></div>
+    <div class="stat"><div class="v hl">139,490</div><div class="l">timestamps shifted by a firmware bug, fixed by +5h30m</div></div>
+    <div class="stat"><div class="v hl">9,460</div><div class="l">"other" tickets re-read: all were battery or range complaints</div></div>
+  </div>
+  <div class="chart" style="margin-top:34px;height:390px"><img src="../outputs/figures/f02_firmware_fix.png"></div>
+</section>
+
+<!-- 6 -->
+<section class="slide" data-sec="1">
+  <h2>Then we followed one chain</h2>
+  <div class="chain">
+    <div class="node"><div class="t">Equipment</div><div class="d">cabinets &amp; battery packs</div></div>
+    <div class="arr">→</div>
+    <div class="node"><div class="t">Service</div><div class="d">failed swaps, stock-outs</div></div>
+    <div class="arr">→</div>
+    <div class="node"><div class="t">Retention</div><div class="d">new-rider churn</div></div>
+    <div class="arr">→</div>
+    <div class="node"><div class="t">Unit economics</div><div class="d">margin per swap</div></div>
+  </div>
+</section>
+
+<!-- 7 · Insight 1 -->
+<section class="slide" data-sec="2">
+  <h2>Insight 1: failures cluster in <span class="red">hot cities, in summer</span></h2>
+  <div class="chart" style="height:560px"><img src="../outputs/figures/f04_failure_heatmap.png"></div>
+  <p class="lead">Jaipur, Delhi and Hyderabad hit 13–19% failures in the evening rush.</p>
+</section>
+
+<!-- 8 -->
+<section class="slide" data-sec="2">
+  <h2>Above 45°C, Gen1 cabinets can't keep up</h2>
+  <div class="chart" style="height:380px"><img src="../outputs/figures/f06_heat_mechanism.png"></div>
+  <div class="stats" style="margin-top:28px">
+    <div class="stat"><div class="v red">88 → 156 min</div><div class="l">Gen1 charge time per pack above 45°C</div></div>
+    <div class="stat"><div class="v red">37%</div><div class="l">of hours with no charged battery (Gen3: 0.3%)</div></div>
+  </div>
+</section>
+
+<!-- 9 -->
+<section class="slide" data-sec="2">
+  <h2>A few stations cause most of the pain</h2>
+  <div class="row" style="height:640px">
+    <div class="chart" style="flex:1"><img src="../outputs/figures/f05_station_pareto.png"></div>
+    <div class="side" style="justify-content:center">
+      <div class="stat"><div class="v red">57.5%</div><div class="l">of summer failures come from 36 hot-city Gen1 stations</div></div>
+      <div class="stat"><div class="v mut">32%</div><div class="l">of summer attempts is all they handle</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- 10 · Insight 2 -->
+<section class="slide" data-sec="3">
+  <h2>Insight 2: three bad battery lots from <span class="red">Kyron</span></h2>
+  <div class="chart" style="height:380px"><img src="../outputs/figures/f08_battery_health.png"></div>
+  <div class="stats" style="margin-top:28px">
+    <div class="stat"><div class="v red">2.4×</div><div class="l">faster loss of battery health</div></div>
+    <div class="stat"><div class="v red">49 vs 61 km</div><div class="l">range per swap for riders</div></div>
+    <div class="stat"><div class="v red">₹82 vs ₹35</div><div class="l">wear cost per swap</div></div>
+  </div>
+</section>
+
+<!-- 11 -->
+<section class="slide" data-sec="3">
+  <h2>It wiped out the price-rise gain, and riders noticed</h2>
+  <div class="row" style="height:620px">
+    <div class="chart" style="flex:1"><img src="../outputs/figures/f03_margin_bridge.png"></div>
+    <div class="side" style="justify-content:center">
+      <div class="stat"><div class="v red">76%</div><div class="l">of the H1-2025 margin loss came from these lots; their later lots were fine</div></div>
+      <div class="stat"><div class="v hl">~9,000</div><div class="l">"other" tickets were really battery complaints</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- 12 · Insight 3 -->
+<section class="slide" data-sec="4">
+  <h2>Insight 3: early failures drive churn</h2>
+  <div class="chart" style="height:420px"><img src="../outputs/figures/f11_churn_drivers.png"></div>
+  <div class="stats" style="margin-top:28px">
+    <div class="stat"><div class="v red">15% vs 9%</div><div class="l">30-day churn after 2+ failed swaps in the first two weeks</div></div>
+    <div class="stat"><div class="v mut">No effect</div><div class="l">from price plan, channel or partner</div></div>
+  </div>
+</section>
+
+<!-- 13 -->
+<section class="slide" data-sec="4">
+  <h2>Pricing: a revenue lever, not a congestion fix</h2>
+  <div class="chart" style="height:380px"><img src="../outputs/figures/f09_pricing_pilot.png"></div>
+  <div class="stats" style="margin-top:28px">
+    <div class="stat"><div class="v grn">+₹8.0</div><div class="l">per swap from the peak-pricing pilot</div></div>
+    <div class="stat"><div class="v mut">−2.6 pts</div><div class="l">peak share; riders swapped 4.6% less often</div></div>
+    <div class="stat"><div class="v red">−₹31.6</div><div class="l">margin per swap at ZipDrop (28% discount), the worst partner</div></div>
+  </div>
+</section>
+
+<!-- 14 · Recommendations -->
+<section class="slide" data-sec="5">
+  <h2>Our recommendations</h2>
+  <ul class="recs">
+    <li><span class="n">1</span>Replace the <span class="hl">36 Gen1 cabinets</span> in the three hot cities before next summer<span class="s">≈ 22,600 failed swaps avoided per year · cooling retrofits first</span></li>
+    <li><span class="n">2</span>Pull the bad-lot packs still in service and <span class="hl">replace them</span><span class="s">1,385 packs, 25% of the 2W fleet · buy on lot tests, not supplier name</span></li>
+  </ul>
+</section>
+
+<!-- 15 -->
+<section class="slide" data-sec="5">
+  <h2>Our recommendations</h2>
+  <ul class="recs">
+    <li style="color:#6f7684"><span class="n" style="background:#3a404c;color:#aeb4c0">1</span>Replace the 36 Gen1 cabinets in the three hot cities</li>
+    <li style="color:#6f7684"><span class="n" style="background:#3a404c;color:#aeb4c0">2</span>Pull and replace the bad-lot packs</li>
+    <li><span class="n">3</span>Protect every new rider's <span class="hl">first fortnight</span><span class="s">healthy packs + an automatic credit after any failure</span></li>
+    <li><span class="n">4</span><span class="hl">Renegotiate ZipDrop</span> instead of signing an exclusive</li>
+  </ul>
+</section>
+
+<!-- 16 · Close -->
+<section class="slide center" data-sec="5">
+  <div class="bolt">⚡</div>
+  <h1>Fix the equipment and the batteries,<br><span class="hl">and growth becomes profitable.</span></h1>
+  <div class="by">Team WindRocker · Gradient Learnings Data Analytics Hackathon</div>
+</section>
+
+<script>
+const SECS = ["Business problem", "Approach", "Insight 1 · Heat × Gen1", "Insight 2 · Kyron batteries", "Insight 3 · Churn & pricing", "Recommendations"];
+const slides = [...document.querySelectorAll('.slide')];
+slides.forEach(s => {
+  if (s.classList.contains('center')) return;
+  const k = +s.dataset.sec;
+  const top = document.createElement('div');
+  top.className = 'top';
+  top.innerHTML = `<span class="sec">${SECS[k]}</span><span>VoltRelay · WindRocker <span class="dots">${SECS.map((_, i) => `<span class="${i <= k ? 'a' : ''}"></span>`).join('')}</span></span>`;
+  s.prepend(top);
+});
+const n = parseInt((location.hash.match(/s=(\d+)/) || [0, 1])[1]);
+slides[n - 1].classList.add('on');
+</script>
+</body>
+</html>

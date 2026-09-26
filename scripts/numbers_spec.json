@@ -1,0 +1,17 @@
+[{"metric":"churn_no_fail2plus","fmt":"{:.1f}%","files":["report/VoltRelay_Report_WindRocker.pdf","content/linkedin_post.md"],"forbid":["15.0% vs 8.9%"]},
+ {"metric":"swap_growth_x","fmt":"{:.1f}×","files":["*"]},
+ {"metric":"gen1_stockout_hot","fmt":"{:.0f}%","files":["*"]},
+ {"metric":"fails_avoided_per_year","fmt":"{:,.0f}","round":-2,"files":["report/VoltRelay_Report_WindRocker.pdf"]},
+ {"metric":"hot_gen1_summer_fail_share","fmt":"{:.1f}%","files":["report/VoltRelay_Report_WindRocker.pdf","content/linkedin_post.md","content/carousel.html","VoltRelay_Analysis_WindRocker.ipynb"],"forbid":["43% of all failures"]},
+ {"metric":"cm_gap_share_from_bad_lots","fmt":"{:.0f}%","files":["report/VoltRelay_Report_WindRocker.pdf","content/linkedin_post.md","content/carousel.html","VoltRelay_Analysis_WindRocker.ipynb"]},
+ {"metric":"pricing_rollout_net_m_per_year","fmt":"₹{:.1f}M","files":["report/VoltRelay_Report_WindRocker.pdf","content/linkedin_post.md","content/carousel.html","VoltRelay_Analysis_WindRocker.ipynb"],"forbid":["≈₹6.1M / yr","≈₹6M / yr","≈+₹6.1M a year"]},
+ {"metric":"or_fail2plus_adjusted","fmt":"{:.2f}","files":["report/VoltRelay_Report_WindRocker.pdf","content/linkedin_post.md","content/carousel.html","VoltRelay_Analysis_WindRocker.ipynb"]},
+ {"metric":"writeoff_2w_m","fmt":"₹{:.1f}M","files":["report/VoltRelay_Report_WindRocker.pdf","VoltRelay_Analysis_WindRocker.ipynb"],"forbid":["within ~12 months","≈₹34M / yr excess wear avoided"]},
+ {"metric":"kyron_premature_loss_m","fmt":"₹{:.1f}M","files":["report/VoltRelay_Report_WindRocker.pdf","VoltRelay_Analysis_WindRocker.ipynb"]},
+ {"metric":"failure_revenue_lost_m_18mo","fmt":"₹{:.1f}M","files":["report/VoltRelay_Report_WindRocker.pdf","VoltRelay_Analysis_WindRocker.ipynb"]},
+ {"metric":"cooling_5c_pct_of_gen3","fmt":"{:.0f}%","files":["report/VoltRelay_Report_WindRocker.pdf","VoltRelay_Analysis_WindRocker.ipynb"]},
+ {"metric":"riders_saved_high","fmt":"{:.0f}","files":["report/VoltRelay_Report_WindRocker.pdf","VoltRelay_Analysis_WindRocker.ipynb"]},
+ {"metric":"churn_q2_2025","fmt":"{:.1f}%","files":["report/VoltRelay_Report_WindRocker.pdf","VoltRelay_Analysis_WindRocker.ipynb"]},
+ {"metric":"did_revenue_per_rider_pct","fmt":"{:.1f}%","files":["report/VoltRelay_Report_WindRocker.pdf","VoltRelay_Analysis_WindRocker.ipynb"]},
+ {"metric":"retired_2w_share_of_fleet","fmt":"{:.0f}%","files":["report/VoltRelay_Report_WindRocker.pdf","content/carousel.html","VoltRelay_Analysis_WindRocker.ipynb"]}
+]

@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VoltRelay Network Dashboard</title>
+<meta name="description" content="VoltRelay battery-swap network, Jan 2024 – Jun 2025: service failures, battery health, pricing, partners and new-rider churn. Team WindRocker.">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.1" integrity="sha384-jb8JQMbMoBUzgWatfe6COACi2ljcDdZQ2OxczGA3bGNeWe+6DChMTBJemed7ZnvJ" crossorigin="anonymous"></script>
+<style>
+:root {
+  color-scheme: light;
+  --bg: #f4f3ef; --surface: #fcfcfb; --surface-2: #f0efec; --border: #e2e1dc;
+  --text: #0b0b0b; --text-2: #52514e; --text-3: #7a7974;
+  --s1: #2a78d6; --s2: #eb6834; --s3: #1baf7a; --s4: #eda100; --s5: #e87ba4; --s6: #008300; --s7: #4a3aa7; --s8: #e34948;
+  --bad: #e34948; --good: #1baf7a; --muted: #b9b8b3; --grid: #e6e5e1;
+  --seq-0: #eef4fc; --seq-1: #cde2fb; --seq-2: #9ec5f4; --seq-3: #6da7ec; --seq-4: #3987e5; --seq-5: #256abf; --seq-6: #184f95; --seq-7: #0d366b;
+  --hero: #10131a; --hero-text: #ffffff; --hero-2: #aeb4c0; --accent: #f5b83d;
+  --radius: 10px; --gap: 16px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --bg: #111110; --surface: #1a1a19; --surface-2: #232321; --border: #2e2e2b;
+    --text: #ffffff; --text-2: #c3c2b7; --text-3: #8f8e86;
+    --s1: #3987e5; --s2: #d95926; --s3: #199e70; --s4: #c98500; --s5: #d55181; --s6: #008300; --s7: #9085e9; --s8: #e66767;
+    --bad: #e66767; --good: #199e70; --muted: #5d5c57; --grid: #2c2c2a;
+    --seq-0: #1d2633; --seq-1: #1c3350; --seq-2: #184f95; --seq-3: #1c5cab; --seq-4: #2a78d6; --seq-5: #5598e7; --seq-6: #86b6ef; --seq-7: #b7d3f6;
+    --hero: #0a0c10; --hero-2: #9aa0ab;
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #111110; --surface: #1a1a19; --surface-2: #232321; --border: #2e2e2b;
+  --text: #ffffff; --text-2: #c3c2b7; --text-3: #8f8e86;
+  --s1: #3987e5; --s2: #d95926; --s3: #199e70; --s4: #c98500; --s5: #d55181; --s6: #008300; --s7: #9085e9; --s8: #e66767;
+  --bad: #e66767; --good: #199e70; --muted: #5d5c57; --grid: #2c2c2a;
+  --seq-0: #1d2633; --seq-1: #1c3350; --seq-2: #184f95; --seq-3: #1c5cab; --seq-4: #2a78d6; --seq-5: #5598e7; --seq-6: #86b6ef; --seq-7: #b7d3f6;
+  --hero: #0a0c10; --hero-2: #9aa0ab;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; background: var(--bg); color: var(--text); line-height: 1.5; font-size: 14px; }
+.wrap { max-width: 1320px; margin: 0 auto; padding: 16px; }
+header.hero { background: var(--hero); color: var(--hero-text); border-radius: var(--radius); padding: 22px 24px 18px; margin-bottom: var(--gap); }
+.hero-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; flex-wrap: wrap; }
+.hero h1 { font-size: 22px; font-weight: 700; letter-spacing: -0.2px; }
+.hero h1 .bolt { color: var(--accent); }
+.hero p.sub { color: var(--hero-2); font-size: 13px; margin-top: 2px; }
+.hero .thesis { margin-top: 14px; font-size: 15px; max-width: 980px; color: #e9ebef; }
+.hero .thesis b { color: var(--accent); font-weight: 600; }
+.theme-btn { background: transparent; border: 1px solid #3a3f4a; color: var(--hero-2); border-radius: 6px; padding: 5px 10px; font-size: 12px; cursor: pointer; }
+.filters { display: flex; flex-wrap: wrap; gap: 10px 14px; align-items: flex-end; margin-top: 16px; padding-top: 14px; border-top: 1px solid #262a33; }
+.fg { display: flex; flex-direction: column; gap: 3px; }
+.fg label { font-size: 11px; color: var(--hero-2); text-transform: uppercase; letter-spacing: 0.6px; }
+.fg select { background: #1b1f27; color: #fff; border: 1px solid #333846; border-radius: 6px; padding: 6px 8px; font-size: 13px; min-width: 120px; }
+.reset { background: var(--accent); color: #111; border: 0; border-radius: 6px; padding: 7px 12px; font-weight: 600; font-size: 12px; cursor: pointer; }
+.filter-note { font-size: 12px; color: var(--hero-2); align-self: center; }
+.kpis { display: grid; grid-template-columns: repeat(5, 1fr); gap: var(--gap); margin-bottom: var(--gap); }
+.kpi { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px 16px; }
+.kpi .lab { font-size: 11.5px; color: var(--text-2); text-transform: uppercase; letter-spacing: 0.5px; }
+.kpi .val { font-size: 26px; font-weight: 700; margin: 2px 0; font-variant-numeric: tabular-nums; }
+.kpi .chg { font-size: 12px; color: var(--text-2); }
+.chg .up-good, .chg .down-good { color: var(--good); font-weight: 600; }
+.chg .up-bad, .chg .down-bad { color: var(--bad); font-weight: 600; }
+nav.tabs { display: flex; gap: 4px; flex-wrap: wrap; margin-bottom: var(--gap); border-bottom: 1px solid var(--border); }
+nav.tabs button { background: none; border: 0; border-bottom: 2px solid transparent; padding: 9px 12px; font-size: 13.5px; color: var(--text-2); cursor: pointer; font-weight: 500; }
+nav.tabs button.active { color: var(--text); border-bottom-color: var(--s1); font-weight: 650; }
+.panel { display: none; }
+.panel.active { display: block; }
+.grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--gap); margin-bottom: var(--gap); }
+.grid.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px 18px; min-width: 0; }
+.card.span2 { grid-column: span 2; }
+.card h3 { font-size: 14.5px; font-weight: 650; line-height: 1.35; }
+.card .note { font-size: 12.5px; color: var(--text-2); margin: 3px 0 10px; }
+.chart { position: relative; height: 280px; }
+.chart.tall { height: 340px; }
+.insight { background: var(--surface-2); border-left: 3px solid var(--s1); border-radius: 6px; padding: 10px 14px; font-size: 13.5px; margin-bottom: var(--gap); }
+.insight b { font-weight: 650; }
+.legend-inline { display: flex; gap: 14px; flex-wrap: wrap; font-size: 12px; color: var(--text-2); margin-bottom: 6px; }
+.legend-inline span::before { content: ""; display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 5px; vertical-align: -1px; background: var(--c); }
+.heat { width: 100%; border-collapse: separate; border-spacing: 2px; font-size: 11px; font-variant-numeric: tabular-nums; }
+.heat th { font-weight: 500; color: var(--text-2); padding: 2px; text-align: center; }
+.heat th.row { text-align: right; padding-right: 6px; white-space: nowrap; }
+.heat td { text-align: center; padding: 6px 0; border-radius: 3px; cursor: default; }
+.scroll-x { overflow-x: auto; }
+table.data { width: 100%; border-collapse: collapse; font-size: 12.5px; font-variant-numeric: tabular-nums; }
+table.data th { text-align: left; padding: 8px 8px; border-bottom: 2px solid var(--border); color: var(--text-2); font-weight: 600; font-size: 11.5px; text-transform: uppercase; letter-spacing: 0.4px; white-space: nowrap; cursor: pointer; user-select: none; }
+table.data th:hover { color: var(--text); }
+table.data td { padding: 7px 8px; border-bottom: 1px solid var(--border); white-space: nowrap; }
+table.data td.num, table.data th.num { text-align: right; }
+table.data tr:hover td { background: var(--surface-2); }
+.pill { display: inline-block; padding: 1px 7px; border-radius: 10px; font-size: 11px; font-weight: 600; border: 1px solid var(--border); }
+.bar-cell { position: relative; }
+.bar-cell i { position: absolute; left: 0; top: 25%; height: 50%; background: var(--bad); opacity: 0.18; border-radius: 2px; }
+.recs { display: grid; gap: 12px; }
+.rec { display: grid; grid-template-columns: 44px 1fr auto; gap: 14px; align-items: start; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px 16px; }
+.rec .n { width: 36px; height: 36px; border-radius: 50%; background: var(--s1); color: #fff; font-weight: 700; display: grid; place-items: center; font-size: 16px; }
+.rec h4 { font-size: 14.5px; margin-bottom: 3px; }
+.rec p { font-size: 13px; color: var(--text-2); }
+.rec .impact { text-align: right; min-width: 150px; }
+.rec .impact .big { font-size: 18px; font-weight: 700; }
+.rec .impact .small { font-size: 11.5px; color: var(--text-2); }
+.verdicts { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: var(--gap); }
+.verdict { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px; }
+.verdict .tag { font-size: 12px; font-weight: 700; margin-bottom: 4px; }
+.verdict .tag.yes { color: var(--good); } .verdict .tag.part { color: var(--s4); } .verdict .tag.no { color: var(--bad); }
+.verdict h4 { font-size: 14px; margin-bottom: 4px; }
+.verdict p { font-size: 12.5px; color: var(--text-2); }
+footer { color: var(--text-3); font-size: 12px; padding: 18px 0 8px; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
+.tabular { font-variant-numeric: tabular-nums; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+@media (max-width: 1000px) {
+  .kpis { grid-template-columns: repeat(3, 1fr); }
+  .grid, .grid.three { grid-template-columns: 1fr; }
+  .card.span2 { grid-column: auto; }
+  .verdicts { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 600px) {
+  .wrap { padding: 16px; }
+  .kpis { grid-template-columns: repeat(2, 1fr); }
+  .kpi .val { font-size: 21px; }
+  .verdicts { grid-template-columns: 1fr; }
+  .rec { grid-template-columns: 36px 1fr; }
+  .rec .impact { grid-column: 2; text-align: left; }
+  .fg select { min-width: 0; width: 100%; }
+  .fg { flex: 1 1 40%; }
+  .hero h1 { font-size: 19px; }
+  .chart { height: 240px; }
+}
+@media print { .filters, nav.tabs, .theme-btn { display: none; } .panel { display: block !important; } .card { break-inside: avoid; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="hero">
+  <div class="hero-top">
+    <div>
+      <h1><span class="bolt">⚡</span> VoltRelay Network Dashboard</h1>
+      <p class="sub">Battery-swap network · 6 cities · Jan 2024 – Jun 2025 · 3.81M cleaned swap attempts · Team WindRocker</p>
+    </div>
+    <button class="theme-btn" id="themeBtn" type="button" aria-label="Toggle light or dark theme">◐ Theme</button>
+  </div>
+  <p class="thesis" id="thesis"></p>
+  <div class="filters" role="group" aria-label="Filters">
+    <div class="fg"><label for="fCity">City</label><select id="fCity"><option value="all">All cities</option></select></div>
+    <div class="fg"><label for="fVc">Vehicle</label><select id="fVc"><option value="all">2W + 3W</option><option>2W</option><option>3W</option></select></div>
+    <div class="fg"><label for="fGen">Charger gen</label><select id="fGen"><option value="all">All generations</option><option>Gen1</option><option>Gen2</option><option>Gen3</option></select></div>
+    <div class="fg"><label for="fFrom">From</label><select id="fFrom"></select></div>
+    <div class="fg"><label for="fTo">To</label><select id="fTo"></select></div>
+    <button class="reset" id="resetBtn" type="button">Reset</button>
+    <span class="filter-note" id="filterNote">Filters drive the KPIs, Overview, Failures and Stations tabs.</span>
+  </div>
+</header>
+
+<section class="kpis" aria-label="Headline KPIs">
+  <div class="kpi"><div class="lab">Completed swaps</div><div class="val" id="kSwaps">–</div><div class="chg" id="kSwapsC"></div></div>
+  <div class="kpi"><div class="lab">Revenue</div><div class="val" id="kRev">–</div><div class="chg" id="kRevC"></div></div>
+  <div class="kpi"><div class="lab">Service-failure rate</div><div class="val" id="kFail">–</div><div class="chg" id="kFailC"></div></div>
+  <div class="kpi"><div class="lab">Contribution / swap</div><div class="val" id="kCm">–</div><div class="chg" id="kCmC"></div></div>
+  <div class="kpi"><div class="lab">New-rider 30-day churn</div><div class="val" id="kChurn">–</div><div class="chg" id="kChurnC"></div></div>
+</section>
+
+<nav class="tabs" role="tablist" aria-label="Sections">
+  <button class="active" data-tab="overview" role="tab">1 · Performance</button>
+  <button data-tab="failures" role="tab">2 · Service failures</button>
+  <button data-tab="stations" role="tab">3 · Stations</button>
+  <button data-tab="batteries" role="tab">4 · Batteries</button>
+  <button data-tab="pricing" role="tab">5 · Pricing & partners</button>
+  <button data-tab="retention" role="tab">6 · Retention</button>
+  <button data-tab="recs" role="tab">★ Recommendations</button>
+  <button data-tab="quality" role="tab">Data quality</button>
+</nav>
+
+<!-- 1 OVERVIEW -->
+<section class="panel active" id="p-overview">
+  <div class="insight" id="insOverview"></div>
+  <div class="grid">
+    <div class="card"><h3>Completed swaps and revenue keep climbing</h3><p class="note">Monthly completed swaps (bars) · hover for revenue</p><div class="chart"><canvas id="cVolume"></canvas></div></div>
+    <div class="card"><h3>…but service failures spike every April–June</h3><p class="note">Failed attempts ÷ all attempts (no charged battery, abandoned queue, system error)</p><div class="chart"><canvas id="cFail"></canvas></div></div>
+    <div class="card span2"><h3>Contribution margin per swap: the price-rise gain vanished when the bad Kyron lots arrived</h3><p class="note">₹ per completed swap = revenue − energy − battery wear − site rent & maintenance. Dotted lines: price rise (Jul 24), bad Kyron lots at scale (Sep 24), pilot (Oct 24), ZipDrop deal (Nov 24).</p><div class="chart"><canvas id="cCm"></canvas></div></div>
+  </div>
+</section>
+
+<!-- 2 FAILURES -->
+<section class="panel" id="p-failures">
+  <div class="insight" id="insFail"></div>
+  <div class="grid">
+    <div class="card span2"><h3>Failure rate by city and hour of day</h3><p class="note">Timestamps corrected for the firmware v3.2.0 bug. <label style="margin-left:8px"><input type="checkbox" id="summerOnly" checked> Summer months only (Apr–Jun)</label></p><div class="scroll-x"><table class="heat" id="heatTable"></table></div></div>
+    <div class="card"><h3>Failure rate by charger generation, monthly</h3><p class="note">Gen1 cabinets fail far more often in summer; outside summer all generations match</p><div class="chart"><canvas id="cGen"></canvas></div></div>
+    <div class="card"><h3>What kind of failure? Empty cabinets dominate</h3><p class="note">Share of attempts in the current filter</p><div class="chart"><canvas id="cMix"></canvas></div></div>
+  </div>
+</section>
+
+<!-- 3 STATIONS -->
+<section class="panel" id="p-stations">
+  <div class="insight" id="insStations"></div>
+  <div class="grid">
+    <div class="card"><h3>The heat mechanism: Gen1 charge time and stock-outs above 45°C</h3><p class="note">Hourly telemetry (status = ok). Minutes to charge a pack, by cabinet temperature</p><div class="chart"><canvas id="cHeatMin"></canvas></div></div>
+    <div class="card"><h3>Hours with zero charged 2W packs</h3><p class="note">Same telemetry: share of hours where the cabinet's minimum stock hit zero</p><div class="chart"><canvas id="cHeatSo"></canvas></div></div>
+    <div class="card span2"><h3>Station league table</h3><p class="note">Click a column to sort · filters apply · failure bars scaled to the worst station · <span id="stCount"></span></p><div class="scroll-x"><table class="data" id="stTable"></table></div></div>
+  </div>
+</section>
+
+<!-- 4 BATTERIES -->
+<section class="panel" id="p-batteries">
+  <div class="insight" id="insBatt"></div>
+  <div class="grid">
+    <div class="card"><h3>SoH of 2W packs handed to riders, by supplier</h3><p class="note">Cellora and Amptek overlap almost exactly; Kyron (lots KY-2407/08/09) falls through the 70% end-of-life line</p><div class="chart"><canvas id="cSoh"></canvas></div></div>
+    <div class="card"><h3>Delivered range falls with state of health</h3><p class="note">km covered on the returned pack (odometer-reset outliers removed)</p><div class="chart"><canvas id="cRange"></canvas></div></div>
+    <div class="card span2"><h3>Riders noticed: battery/range complaints (incl. mislabelled 'other' tickets)</h3><p class="note">Tickets per month by cleaned category; 'other' comments like "scooter weak lag raha hai" re-labelled as battery/range</p><div class="chart"><canvas id="cTickets"></canvas></div></div>
+  </div>
+</section>
+
+<!-- 5 PRICING -->
+<section class="panel" id="p-pricing">
+  <div class="insight" id="insPricing"></div>
+  <div class="grid">
+    <div class="card"><h3>Peak pricing lifted revenue per swap for independent riders…</h3><p class="note">₹ per completed swap · pilot cities (Bengaluru, Pune) vs 4 control cities</p><div class="chart"><canvas id="cArps"></canvas></div></div>
+    <div class="card"><h3>…but barely moved demand out of peak hours</h3><p class="note">Share of independent-rider attempts in peak hours (12–14h, 19–23h)</p><div class="chart"><canvas id="cPeak"></canvas></div></div>
+    <div class="card span2"><h3>Contribution margin per swap by partner (H1 2025): the biggest partner is the least profitable</h3><p class="note">Bar = ₹ CM per completed swap · label = H1-2025 swap volume</p><div class="chart tall"><canvas id="cPartner"></canvas></div></div>
+  </div>
+</section>
+
+<!-- 6 RETENTION -->
+<section class="panel" id="p-retention">
+  <div class="insight" id="insRet"></div>
+  <div class="grid">
+    <div class="card"><h3>30-day churn of new riders, with vs without each first-2-week experience</h3><p class="note">Coloured = statistically significant (p &lt; 0.05); grey = not significant</p><div class="chart tall"><canvas id="cLift"></canvas></div></div>
+    <div class="card"><h3>Adjusted odds ratios (logistic regression, all factors together)</h3><p class="note">Dot = odds ratio, whisker = 95% CI; right of 1 = more churn. Controls: plan, city, channel. These are lower bounds: controlling for early activity raises them (robustness notebook).</p><div class="chart tall"><canvas id="cOdds"></canvas></div></div>
+    <div class="card span2"><h3>Retention curves by starting quarter: riders who start in summer (Q2) leave faster</h3><p class="note">% of each cohort still swapping N days after their first swap</p><div class="chart"><canvas id="cCohort"></canvas></div></div>
+  </div>
+</section>
+
+<!-- RECS -->
+<section class="panel" id="p-recs">
+  <div class="insight"><b>Budget verdict.</b> The evidence supports <b>targeted equipment and battery replacement</b>, not blanket growth. Four proposals, scored:</div>
+  <div class="verdicts" id="verdicts"></div>
+  <div class="recs" id="recs"></div>
+</section>
+
+<!-- QUALITY -->
+<section class="panel" id="p-quality">
+  <div class="insight"><b>Every data-quality note in the brief was tested, not assumed.</b> Two were different from the brief: the test stations are not zero-value, and offline-sync near-duplicates show no excess over the realtime baseline.</div>
+  <div class="card"><div class="scroll-x"><table class="data" id="dqTable"></table></div></div>
+</section>
+
+<footer><span>Team WindRocker · Gradient Learnings Data Analytics Hackathon · Synthetic data (seed 59500)</span><span>Source: VoltRelay swap, station, battery, rider, partner and ticket tables · analysis in DuckDB/Python</span></footer>
+</div>
+
+<script>
+const D = /*__DATA__*/null;
+const M = D.metrics;
+const $ = (id) => document.getElementById(id);
+const css = (v) => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+const fmtN = (v) => v >= 1e6 ? (v / 1e6).toFixed(2) + "M" : v >= 1e3 ? (v / 1e3).toFixed(0) + "K" : Math.round(v).toLocaleString();
+const fmtINR = (v) => { const a = Math.abs(v); const s = v < 0 ? "−" : ""; return a >= 1e7 ? s + "₹" + (a / 1e7).toFixed(2) + " Cr" : a >= 1e5 ? s + "₹" + (a / 1e5).toFixed(1) + " L" : s + "₹" + a.toFixed(1); };
+const pct = (v, d = 1) => v.toFixed(d) + "%";
+const inr = (v, d = 1) => (v < 0 ? "−₹" : "₹") + Math.abs(v).toFixed(d);
+const nw = (s) => `<span style="white-space:nowrap">${s}</span>`;
+const lum = (hex) => { const h = hex.replace("#", ""); const [r, g, b] = [0, 2, 4].map(i => parseInt(h.substr(i, 2), 16) / 255).map(c => c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4)); return 0.2126 * r + 0.7152 * g + 0.0722 * b; };
+const monLab = (m) => { const [y, mo] = m.split("-"); return ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"][+mo - 1] + " " + y.slice(2); };
+
+/* ---------- static narrative ---------- */
+$("thesis").innerHTML = `Demand nearly <b>tripled</b>, but three fixable problems drive the pain: <b>Gen1 chargers overheat</b> in Jaipur, Delhi NCR and Hyderabad summers; <b>three bad battery lots (Kyron KY-2407/08/09) degraded 2.4× faster</b> and wiped out the price-rise margin; and <b>new riders who hit 2+ failed swaps in their first fortnight churn 1.7× more</b>.`;
+$("insOverview").innerHTML = `<b>The metrics disagree.</b> Swaps grew ${M.swap_growth_x.toFixed(1)}× and revenue ${ (M.rev_jun25_m / M.rev_jan24_m).toFixed(1)}×, while failures hit ${M.fail_peak_may24.toFixed(1)}% (May 24) and ${M.fail_peak_may25.toFixed(1)}% (May 25) against a ${M.fail_nonsummer.toFixed(1)}% baseline. Failures did not outgrow swaps (H1-25 vs H1-24: ${M.h1_fail_count_growth_x.toFixed(1)}× vs ${M.h1_completed_growth_x.toFixed(1)}×); they spike every summer and have not been fixed. The Jul-24 price rise lifted margin to ${nw(inr(M.cm_jul_aug_24))}/swap; from Sep-24 the bad Kyron lots dragged it back to ${nw(inr(M.cm_post_kyron))}. Without those lots, H1-25 margin would be ${nw(inr(M.cm_h1_25_without_bad_lots))} instead of ${nw(inr(M.cm_h1_2025))}.`;
+$("insFail").innerHTML = `<b>Failures are concentrated, not spread.</b> The ${M.hot_gen1_stations} hot-city Gen1 stations handle ${M.hot_gen1_summer_att_share.toFixed(0)}% of summer attempts but cause <b>${M.hot_gen1_summer_fail_share.toFixed(1)}%</b> of summer failures. In summer, Jaipur/Delhi/Hyderabad fail 13–19% of evening-rush attempts. 3W riders fail ${M.fail_3w_summer.toFixed(1)}% in summer vs ${M.fail_2w_summer.toFixed(1)}% for 2W, and the gap exists all year (${M.fail_3w_rest.toFixed(1)}% vs ${M.fail_2w_rest.toFixed(1)}%). Failed riders don't retry, so failures are lost sales: ≈₹${M.failure_revenue_lost_m_18mo.toFixed(1)}M over 18 months.`;
+$("insStations").innerHTML = `<b>Mechanism:</b> above 45°C a Gen1 cabinet needs <b>${M.gen1_charge_min_hot.toFixed(0)} min</b> to charge a pack (vs ${M.gen1_charge_min_cool.toFixed(0)} when cool) and runs out of charged packs in <b>${M.gen1_stockout_hot.toFixed(0)}%</b> of hours. Gen3 stays at ${M.gen3_charge_min_hot.toFixed(0)} min and ${M.gen3_stockout_hot.toFixed(1)}%. Hot-city Gen1 fails ${M.gen1_day_fail_below43.toFixed(1)}% on days whose cabinet peak stays under 43°C vs ${M.gen1_day_fail_46plus.toFixed(1)}% above 46°C, and fails ~3× Gen3 at every load level. The expansion waves added Gen2/Gen3 sites everywhere but replaced none of the ${M.gen1_stations_remaining} Gen1 cabinets.`;
+$("insBatt").innerHTML = `<b>Three lots stand out, not a supplier.</b> Kyron lots KY-2407/08/09 lose ${M.kyron_2w_bad_loss_1k.toFixed(0)} SoH points per 1,000 swaps vs ${M.cellora_2w_loss_1k.toFixed(0)}; Kyron's later 3W lots lose ${M.kyron_3w_later_loss_1k.toFixed(0)}, like Cellora. The bad 2W packs deliver <b>${M.km_kyron_2w.toFixed(0)} km vs ${M.km_cellora_2w.toFixed(0)} km</b> per swap and cost <b>₹${M.wear_kyron_2w.toFixed(0)} vs ₹${M.wear_cellora_2w.toFixed(0)}</b> in wear. All ${M.kyron_retired_packs.toLocaleString()} retired packs are Kyron (2W: ₹${M.writeoff_2w_m.toFixed(1)}M, ${M.retired_2w_share_of_fleet.toFixed(0)}% of the 2W fleet), yet they were issued ${M.anom_retired_swaps_after.toLocaleString()} more times after retirement. ${M.hidden_battery_tickets.toLocaleString()} 'other' tickets were really range complaints, making battery/range the #1 complaint (${M.battery_range_ticket_share.toFixed(0)}%).`;
+$("insPricing").innerHTML = `<b>Pricing is a revenue lever, not a congestion lever.</b> Difference-in-differences with station and month fixed effects: +₹${M.did_reg_arps.toFixed(1)} per swap for independent riders, only ${Math.abs(M.did_reg_peak_share).toFixed(1)} pts of demand moved out of peak, no change in failures, and riders swapped ${Math.abs(M.did_swaps_per_rider_pct).toFixed(1)}% less often. ZipDrop (${M.zipdrop_share_h1_25.toFixed(0)}% of volume) fell from ₹${M.zipdrop_rev_before.toFixed(1)} to ₹${M.zipdrop_rev_after.toFixed(1)} revenue per swap after its 28% deal, the lowest margin on the network, and loses ${nw(inr(M.zipdrop_variable_margin))} per swap even before site costs.`;
+$("insRet").innerHTML = `<b>Primary drivers:</b> 2+ failed swaps in the first 14 days (churn ${M.churn_yes_fail2plus.toFixed(1)}% vs ${M.churn_no_fail2plus.toFixed(1)}%, OR ${M.or_fail2plus.toFixed(2)}, or ${M.or_fail2plus_adjusted.toFixed(2)} with early activity controlled) and starting in summer (OR ${M.or_summer_start.toFixed(2)}). <b>Contributing:</b> receiving packs under 85% SoH (OR ${M.or_low_soh_pack.toFixed(2)}). <b>Not drivers:</b> price plan, channel, partner, KYC, competitor promotions. The April-2025 intake churned worst (${M.churn_q2_2025.toFixed(1)}%). Retention is an operations problem.`;
+$("kChurn").textContent = pct(M.churn30_overall);
+$("kChurnC").textContent = `${M.new_riders_analysed.toLocaleString()} new riders · not filtered`;
+
+/* ---------- filters ---------- */
+const months = [...new Set(D.cube.map(r => r.m))].sort();
+const cities = [...new Set(D.cube.map(r => r.city))].sort();
+cities.forEach(c => $("fCity").add(new Option(c, c)));
+months.forEach(m => { $("fFrom").add(new Option(monLab(m), m)); $("fTo").add(new Option(monLab(m), m)); });
+$("fFrom").value = months[0]; $("fTo").value = months[months.length - 1];
+function F() { return { city: $("fCity").value, vc: $("fVc").value, gen: $("fGen").value, from: $("fFrom").value, to: $("fTo").value }; }
+const pass = (r, f, useDate = true) => (f.city === "all" || r.city === f.city) && (f.vc === "all" || r.vc === f.vc) && (f.gen === "all" || r.gen === f.gen) && (!useDate || (r.m >= f.from && r.m <= f.to));
+
+/* ---------- chart helpers ---------- */
+const charts = {};
+function baseOpts(extra = {}) {
+  const grid = css("--grid"), t2 = css("--text-2");
+  return Object.assign({ responsive: true, maintainAspectRatio: false, animation: false,
+    interaction: { mode: "index", intersect: false },
+    plugins: { legend: { labels: { color: t2, usePointStyle: true, boxWidth: 8, font: { size: 12 } } }, tooltip: { backgroundColor: css("--surface"), titleColor: css("--text"), bodyColor: css("--text"), borderColor: css("--border"), borderWidth: 1, padding: 10 } },
+    scales: { x: { grid: { display: false }, ticks: { color: t2, maxRotation: 0, autoSkipPadding: 10 } }, y: { grid: { color: grid }, ticks: { color: t2 }, border: { display: false } } } }, extra);
+}
+function mk(id, cfg) { if (charts[id]) charts[id].destroy(); charts[id] = new Chart($(id), cfg); return charts[id]; }
+const eventLines = { id: "eventLines", afterDatasetsDraw(c, _a, o) {
+  if (!o || !o.at) return; const { ctx, chartArea: a, scales: { x } } = c; ctx.save(); ctx.strokeStyle = css("--text-3"); ctx.setLineDash([3, 3]); ctx.lineWidth = 1;
+  o.at.forEach(m => { const px = x.getPixelForValue(monLab(m)); if (px >= a.left && px <= a.right) { ctx.beginPath(); ctx.moveTo(px, a.top); ctx.lineTo(px, a.bottom); ctx.stroke(); } }); ctx.restore(); } };
+Chart.register(eventLines);
+const EV = ["2024-07", "2024-09", "2024-10", "2024-11"];
+
+/* ---------- aggregate ---------- */
+function agg(rows) { const a = { att: 0, comp: 0, fail: 0, nobatt: 0, aband: 0, rev: 0, cm: 0 }; rows.forEach(r => { for (const k in a) a[k] += r[k] || 0; }); return a; }
+function byMonth(rows) { const g = {}; rows.forEach(r => { (g[r.m] = g[r.m] || []).push(r); }); return Object.keys(g).sort().map(m => Object.assign({ m }, agg(g[m]))); }
+function setChg(id, cur, prev, higherIsGood, fmt) {
+  const el = $(id);
+  if (prev == null || !isFinite(prev) || prev === 0) { el.textContent = "no prior period in range"; return; }
+  const d = cur - prev, up = d >= 0, good = higherIsGood ? up : !up;
+  el.innerHTML = `<span class="${good ? "up-good" : "up-bad"}">${up ? "▲" : "▼"} ${fmt(Math.abs(d))}</span> ${_cmp}`;
+}
+let _span = 0, _cmp = "";
+
+function render() {
+  const f = F();
+  if (f.from > f.to) { $("fTo").value = f.from; f.to = f.from; }
+  const rows = D.cube.filter(r => pass(r, f));
+  const a = agg(rows);
+  const i0 = months.indexOf(f.from), i1 = months.indexOf(f.to); _span = i1 - i0 + 1;
+  let curRows = rows, prevMonths = months.slice(Math.max(0, i0 - _span), i0), cmpLabel = `vs prior ${_span} mo`;
+  if (prevMonths.length !== _span && _span >= 12) {           // full-range view: compare the last 6 months with the 6 before
+    const last6 = months.slice(i1 - 5, i1 + 1); prevMonths = months.slice(i1 - 11, i1 - 5); _span = 6; cmpLabel = "last 6 mo vs previous 6 mo";
+    curRows = D.cube.filter(r => pass(r, f, false) && last6.includes(r.m));
+  }
+  _cmp = cmpLabel;
+  const cur6 = agg(curRows);
+  const prev = prevMonths.length === _span ? agg(D.cube.filter(r => pass(r, f, false) && prevMonths.includes(r.m))) : null;
+  $("kSwaps").textContent = fmtN(a.comp); $("kRev").textContent = fmtINR(a.rev);
+  $("kFail").textContent = a.att ? pct(100 * a.fail / a.att, 2) : "–"; $("kCm").textContent = a.comp ? inr(a.cm / a.comp) : "–";
+  if (prev) {
+    const c = cur6;
+    setChg("kSwapsC", c.comp, prev.comp, true, v => (100 * v / prev.comp).toFixed(0) + "%");
+    setChg("kRevC", c.rev, prev.rev, true, v => (100 * v / prev.rev).toFixed(0) + "%");
+    setChg("kFailC", 100 * c.fail / c.att, 100 * prev.fail / prev.att, false, v => v.toFixed(2) + " pts");
+    setChg("kCmC", c.cm / c.comp, prev.cm / prev.comp, true, v => "₹" + v.toFixed(1));
+  } else { ["kSwapsC", "kRevC", "kFailC", "kCmC"].forEach(id => $(id).textContent = "no equal-length prior period"); }
+
+  const bm = byMonth(rows); const labels = bm.map(r => monLab(r.m));
+  mk("cVolume", { type: "bar", data: { labels, datasets: [{ label: "Completed swaps", data: bm.map(r => r.comp), backgroundColor: css("--s1"), borderRadius: 4, borderSkipped: "start", maxBarThickness: 26 }] },
+    options: baseOpts({ plugins: Object.assign(baseOpts().plugins, { legend: { display: false }, eventLines: { at: EV }, tooltip: Object.assign(baseOpts().plugins.tooltip, { callbacks: { label: c => ` ${fmtN(c.parsed.y)} swaps · revenue ${fmtINR(bm[c.dataIndex].rev)}` } }) }),
+      scales: Object.assign(baseOpts().scales, { y: Object.assign(baseOpts().scales.y, { ticks: { color: css("--text-2"), callback: v => fmtN(v) } }) }) }) });
+  mk("cFail", { type: "line", data: { labels, datasets: [
+      { label: "All failures", data: bm.map(r => 100 * r.fail / r.att), borderColor: css("--bad"), backgroundColor: css("--bad"), borderWidth: 2, pointRadius: 3, tension: 0.25 },
+      { label: "No charged battery", data: bm.map(r => 100 * r.nobatt / r.att), borderColor: css("--s1"), backgroundColor: css("--s1"), borderWidth: 2, pointRadius: 2, tension: 0.25 },
+      { label: "Abandoned queue", data: bm.map(r => 100 * r.aband / r.att), borderColor: css("--s2"), backgroundColor: css("--s2"), borderWidth: 2, pointRadius: 2, tension: 0.25 }] },
+    options: baseOpts({ plugins: Object.assign(baseOpts().plugins, { eventLines: { at: [] }, tooltip: Object.assign(baseOpts().plugins.tooltip, { callbacks: { label: c => ` ${c.dataset.label}: ${c.parsed.y.toFixed(2)}%` } }) }),
+      scales: Object.assign(baseOpts().scales, { y: Object.assign(baseOpts().scales.y, { beginAtZero: true, ticks: { color: css("--text-2"), callback: v => v + "%" } }) }) }) });
+  mk("cCm", { type: "line", data: { labels, datasets: [{ label: "Contribution margin per swap", data: bm.map(r => r.comp ? r.cm / r.comp : null), borderColor: css("--s1"), backgroundColor: css("--s1"), borderWidth: 2, pointRadius: 3, tension: 0.2 }] },
+    options: baseOpts({ plugins: Object.assign(baseOpts().plugins, { legend: { display: false }, eventLines: { at: EV }, tooltip: Object.assign(baseOpts().plugins.tooltip, { callbacks: { label: c => ` ${inr(c.parsed.y)} per swap` } }) }),
+      scales: Object.assign(baseOpts().scales, { y: Object.assign(baseOpts().scales.y, { ticks: { color: css("--text-2"), callback: v => inr(v, 0) } }) }) }) });
+
+  // failures tab
+  renderHeat(f);
+  const gens = ["Gen1", "Gen2", "Gen3"], gc = { Gen1: css("--bad"), Gen2: css("--s1"), Gen3: css("--s3") };
+  const fg = Object.assign({}, f, { gen: "all" });
+  const gm = gens.map(g => { const rr = byMonth(D.cube.filter(r => pass(r, fg) && r.gen === g)); return { g, rr }; });
+  const glabels = byMonth(D.cube.filter(r => pass(r, fg))).map(r => r.m);
+  mk("cGen", { type: "line", data: { labels: glabels.map(monLab), datasets: gm.map(({ g, rr }) => { const mp = Object.fromEntries(rr.map(r => [r.m, 100 * r.fail / r.att])); return { label: g, data: glabels.map(m => mp[m] ?? null), borderColor: gc[g], backgroundColor: gc[g], borderWidth: 2, pointRadius: 2, tension: 0.25, spanGaps: true }; }) },
+    options: baseOpts({ plugins: Object.assign(baseOpts().plugins, { tooltip: Object.assign(baseOpts().plugins.tooltip, { callbacks: { label: c => ` ${c.dataset.label}: ${c.parsed.y.toFixed(2)}%` } }) }),
+      scales: Object.assign(baseOpts().scales, { y: Object.assign(baseOpts().scales.y, { beginAtZero: true, ticks: { color: css("--text-2"), callback: v => v + "%" } }) }) }) });
+  const other = a.fail - a.nobatt - a.aband;
+  mk("cMix", { type: "bar", data: { labels: ["No charged battery", "Abandoned queue", "System error"], datasets: [{ data: [a.nobatt, a.aband, other].map(v => 100 * v / a.att), backgroundColor: [css("--s1"), css("--s2"), css("--muted")], borderRadius: 4, borderSkipped: "start", maxBarThickness: 34 }] },
+    options: baseOpts({ indexAxis: "y", plugins: Object.assign(baseOpts().plugins, { legend: { display: false }, tooltip: Object.assign(baseOpts().plugins.tooltip, { callbacks: { label: c => ` ${c.parsed.x.toFixed(2)}% of attempts` } }) }),
+      scales: { x: { grid: { color: css("--grid") }, ticks: { color: css("--text-2"), callback: v => v + "%" }, beginAtZero: true }, y: { grid: { display: false }, ticks: { color: css("--text-2") } } } }) });
+
+  renderStations(f);
+}
+
+function renderHeat(f) {
+  const summer = $("summerOnly").checked;
+  const rows = D.hourly.filter(r => (f.gen === "all" || r.gen === f.gen) && (!summer || r.summer));
+  const cityList = f.city === "all" ? cities : [f.city];
+  const g = {}; rows.forEach(r => { const k = r.city + "|" + r.h; g[k] = g[k] || { att: 0, fail: 0 }; g[k].att += r.att; g[k].fail += r.fail; });
+  const vals = []; cityList.forEach(c => { for (let h = 0; h < 24; h++) { const x = g[c + "|" + h]; if (x && x.att) vals.push(100 * x.fail / x.att); } });
+  const hi = Math.max(...vals, 1), seq = [0, 1, 2, 3, 4, 5, 6, 7].map(i => css("--seq-" + i));
+  const order = cityList.slice().sort((p, q) => { const s = c => { let a = 0, b = 0; for (let h = 0; h < 24; h++) { const x = g[c + "|" + h]; if (x) { a += x.fail; b += x.att; } } return b ? a / b : 0; }; return s(q) - s(p); });
+  let html = "<thead><tr><th></th>" + [...Array(24).keys()].map(h => `<th>${h}</th>`).join("") + "</tr></thead><tbody>";
+  order.forEach(c => { html += `<tr><th class="row">${c}</th>`; for (let h = 0; h < 24; h++) { const x = g[c + "|" + h]; const v = x && x.att ? 100 * x.fail / x.att : null; const idx = v == null ? 0 : Math.min(7, Math.round(7 * v / hi)); const txt = lum(seq[idx]) < 0.28 ? "#ffffff" : "#0b0b0b"; html += `<td style="background:${seq[idx]};color:${txt}" title="${c}, ${h}:00, ${v == null ? "no data" : v.toFixed(1) + "% of " + x.att.toLocaleString() + " attempts"}">${v == null ? "" : v.toFixed(0)}</td>`; } html += "</tr>"; });
+  $("heatTable").innerHTML = html + "</tbody>";
+}
+
+let stSort = { k: "summer_fail", dir: -1 };
+function renderStations(f) {
+  const rows = D.stations.filter(r => (f.city === "all" || r.city === f.city) && (f.gen === "all" || r.gen === f.gen));
+  rows.sort((p, q) => (p[stSort.k] > q[stSort.k] ? 1 : p[stSort.k] < q[stSort.k] ? -1 : 0) * stSort.dir);
+  const cols = [["station_id", "Station"], ["city", "City"], ["gen", "Gen"], ["location_type", "Location"], ["wave", "Wave"], ["att", "Attempts", "num"], ["fail_rate", "Fail %", "num"], ["summer_fail", "Summer fail %", "num"], ["charge_min", "Charge min", "num"], ["summer_temp", "Summer cabinet °C", "num"], ["tickets_per_1k", "Tickets / 1k", "num"], ["cm", "CM ₹/swap", "num"]];
+  const maxF = Math.max(...D.stations.map(r => r.summer_fail));
+  let html = "<thead><tr>" + cols.map(([k, l, c]) => `<th class="${c || ""}" data-k="${k}">${l}${stSort.k === k ? (stSort.dir < 0 ? " ▼" : " ▲") : ""}</th>`).join("") + "</tr></thead><tbody>";
+  rows.forEach(r => {
+    const gcol = r.gen === "Gen1" ? css("--bad") : r.gen === "Gen2" ? css("--s1") : css("--s3");
+    html += `<tr><td>${r.station_id}</td><td>${r.city}</td><td><span class="pill" style="border-color:${gcol};color:${gcol}">${r.gen}</span></td><td>${r.location_type.replace(/_/g, " ")}</td><td>${r.wave.replace("_", " ")}</td>
+      <td class="num">${r.att.toLocaleString()}</td><td class="num">${r.fail_rate.toFixed(1)}</td><td class="num bar-cell"><i style="width:${(100 * r.summer_fail / maxF).toFixed(0)}%"></i>${r.summer_fail.toFixed(1)}</td>
+      <td class="num">${r.charge_min.toFixed(0)}</td><td class="num">${r.summer_temp.toFixed(1)}</td><td class="num">${r.tickets_per_1k.toFixed(1)}</td><td class="num">${r.cm.toFixed(1)}</td></tr>`;
+  });
+  $("stTable").innerHTML = html + "</tbody>";
+  $("stCount").textContent = `${rows.length} stations`;
+  $("stTable").querySelectorAll("th").forEach(th => th.onclick = () => { const k = th.dataset.k; stSort = { k, dir: stSort.k === k ? -stSort.dir : -1 }; renderStations(F()); });
+}
+
+/* ---------- static tabs ---------- */
+function renderStatic() {
+  const gc = { Gen1: css("--bad"), Gen2: css("--s1"), Gen3: css("--s3") }, bands = ["<35", "35–40", "40–45", "45+"];
+  ["cHeatMin", "cHeatSo"].forEach(id => {
+    const col = id === "cHeatMin" ? "charge_min" : "stockout_pct";
+    mk(id, { type: "bar", data: { labels: bands.map(b => b + "°C"), datasets: ["Gen1", "Gen2", "Gen3"].map(g => ({ label: g, data: bands.map(b => (D.heat.find(r => r.gen === g && r.band === b) || {})[col]), backgroundColor: gc[g], borderRadius: 4, borderSkipped: "start", maxBarThickness: 28 })) },
+      options: baseOpts({ plugins: Object.assign(baseOpts().plugins, { tooltip: Object.assign(baseOpts().plugins.tooltip, { callbacks: { label: c => ` ${c.dataset.label}: ${c.parsed.y.toFixed(1)}${col === "charge_min" ? " min" : "% of hours"}` } }) }),
+        scales: Object.assign(baseOpts().scales, { y: Object.assign(baseOpts().scales.y, { beginAtZero: true, ticks: { color: css("--text-2"), callback: v => col === "charge_min" ? v : v + "%" } }) }) }) });
+  });
+  const sc = { Cellora: css("--s1"), Amptek: css("--s3"), Kyron: css("--bad") };
+  const sm = [...new Set(D.supplier_soh.map(r => r.m))].sort();
+  mk("cSoh", { type: "line", data: { labels: sm.map(monLab), datasets: ["Cellora", "Amptek", "Kyron"].map((s, i) => ({ label: s, data: sm.map(m => (D.supplier_soh.find(r => r.m === m && r.supplier === s) || {}).soh ?? null), borderColor: sc[s], backgroundColor: sc[s], borderWidth: 2, pointRadius: 2, borderDash: s === "Amptek" ? [5, 4] : [], tension: 0.2, spanGaps: true })) },
+    options: baseOpts({ plugins: Object.assign(baseOpts().plugins, { tooltip: Object.assign(baseOpts().plugins.tooltip, { callbacks: { label: c => ` ${c.dataset.label}: ${c.parsed.y.toFixed(1)}% SoH` } }) }),
+      scales: Object.assign(baseOpts().scales, { y: Object.assign(baseOpts().scales.y, { ticks: { color: css("--text-2"), callback: v => v + "%" } }) }) }) });
+  const packs = ["2W_2.1kWh", "3W_4.8kWh"], pc = { "2W_2.1kWh": css("--s1"), "3W_4.8kWh": css("--s2") };
+  mk("cRange", { type: "line", data: { datasets: packs.map(p => ({ label: p.replace("_", " "), data: D.range_soh.filter(r => r.pack === p).map(r => ({ x: r.soh_band + 2.5, y: r.km })), borderColor: pc[p], backgroundColor: pc[p], borderWidth: 2, pointRadius: 4 })) },
+    options: baseOpts({ interaction: { mode: "nearest", intersect: false }, plugins: Object.assign(baseOpts().plugins, { tooltip: Object.assign(baseOpts().plugins.tooltip, { callbacks: { title: c => `SoH ≈ ${c[0].parsed.x}%`, label: c => ` ${c.dataset.label}: ${c.parsed.y.toFixed(1)} km` } }) }),
+      scales: { x: { type: "linear", title: { display: true, text: "State of health of returned pack (%)", color: css("--text-2") }, grid: { display: false }, ticks: { color: css("--text-2") } }, y: { title: { display: true, text: "km per swap", color: css("--text-2") }, grid: { color: css("--grid") }, ticks: { color: css("--text-2") }, border: { display: false } } } }) });
+  const tm = [...new Set(D.tickets.map(r => r.m))].sort();
+  const cats = [["battery_range", "Battery / range", "--bad"], ["no_battery_available", "No battery available", "--s1"], ["long_queue", "Long queue", "--s2"], ["app_issue", "App issue", "--s3"], ["billing_dispute", "Billing dispute", "--s4"]];
+  mk("cTickets", { type: "bar", data: { labels: tm.map(monLab), datasets: cats.map(([k, l, c]) => ({ label: l, data: tm.map(m => (D.tickets.find(r => r.m === m && r.cat === k) || {}).n || 0), backgroundColor: css(c), borderColor: css("--surface"), borderWidth: { top: 2 }, maxBarThickness: 28 })) },
+    options: baseOpts({ scales: { x: Object.assign(baseOpts().scales.x, { stacked: true }), y: Object.assign(baseOpts().scales.y, { stacked: true }) } }) });
+  const pm = [...new Set(D.pricing.map(r => r.m))].sort();
+  [["cArps", "arps", v => "₹" + v], ["cPeak", "peak_share", v => v.toFixed(1) + "%"]].forEach(([id, k, fmt]) => {
+    mk(id, { type: "line", data: { labels: pm.map(monLab), datasets: [[false, "Control cities (4)", "--muted"], [true, "Pilot: Bengaluru + Pune", "--s2"]].map(([p, l, c]) => ({ label: l, data: pm.map(m => (D.pricing.find(r => r.m === m && r.pilot === p) || {})[k]), borderColor: css(c), backgroundColor: css(c), borderWidth: 2, pointRadius: 2, tension: 0.2 })) },
+      options: baseOpts({ plugins: Object.assign(baseOpts().plugins, { eventLines: { at: ["2024-10"] }, tooltip: Object.assign(baseOpts().plugins.tooltip, { callbacks: { label: c => ` ${c.dataset.label}: ${k === "arps" ? "₹" + c.parsed.y.toFixed(1) : c.parsed.y.toFixed(1) + "%"}` } }) }),
+        scales: Object.assign(baseOpts().scales, { y: Object.assign(baseOpts().scales.y, { ticks: { color: css("--text-2"), callback: fmt } }) }) }) });
+  });
+  const pp = D.partners.slice().sort((a, b) => b.cm_per_swap - a.cm_per_swap);
+  mk("cPartner", { type: "bar", data: { labels: pp.map(r => r.partner), datasets: [{ data: pp.map(r => r.cm_per_swap), backgroundColor: pp.map(r => r.partner === "ZipDrop" ? css("--bad") : r.partner === "Independent" ? css("--muted") : css("--s1")), borderRadius: 4, borderSkipped: "start", maxBarThickness: 22 }] },
+    options: baseOpts({ indexAxis: "y", plugins: Object.assign(baseOpts().plugins, { legend: { display: false }, tooltip: Object.assign(baseOpts().plugins.tooltip, { callbacks: { label: c => { const r = pp[c.dataIndex]; return [` CM ${inr(r.cm_per_swap)} per swap`, ` Revenue ₹${r.rev_per_swap.toFixed(1)} · discount ₹${r.avg_discount.toFixed(1)}`, ` ${fmtN(r.swaps)} swaps in H1-2025`]; } } }) }),
+      scales: { x: { grid: { color: css("--grid") }, ticks: { color: css("--text-2"), callback: v => inr(v, 0) } }, y: { grid: { display: false }, ticks: { color: css("--text-2"), callback: function (v) { const r = pp[v]; return `${r.partner} (${fmtN(r.swaps)})`; } } } } }) });
+  const L = D.lift.slice().sort((a, b) => b.lift - a.lift);
+  const liftCol = r => r.p_value < 0.05 && r.lift > 1 ? (r.lift >= 1.3 ? css("--bad") : css("--s2")) : css("--muted");
+  mk("cLift", { type: "bar", data: { labels: L.map(r => r.factor), datasets: [
+      { label: "Churn if present", data: L.map(r => r.churn_if_yes), backgroundColor: L.map(liftCol), borderRadius: 4, borderSkipped: "start", maxBarThickness: 16 },
+      { label: "Churn if absent", data: L.map(r => r.churn_if_no), backgroundColor: css("--text-3"), borderRadius: 4, borderSkipped: "start", maxBarThickness: 6 }] },
+    options: baseOpts({ indexAxis: "y", plugins: Object.assign(baseOpts().plugins, { tooltip: Object.assign(baseOpts().plugins.tooltip, { callbacks: { label: c => ` ${c.dataset.label}: ${c.parsed.x.toFixed(1)}%`, afterBody: c => { const r = L[c[0].dataIndex]; return [` Lift ${r.lift.toFixed(2)}× · p = ${r.p_value < 0.001 ? "<0.001" : r.p_value.toFixed(3)}`, ` ${r.exposed_pct.toFixed(0)}% of new riders exposed`]; } } }) }),
+      scales: { x: { grid: { color: css("--grid") }, ticks: { color: css("--text-2"), callback: v => v + "%" }, beginAtZero: true }, y: { grid: { display: false }, ticks: { color: css("--text-2"), font: { size: 11 } } } } }) });
+  const O = D.odds.slice().sort((a, b) => a.odds_ratio - b.odds_ratio);
+  const oddsCol = r => r.p < 0.05 ? (r.odds_ratio > 1.2 ? css("--bad") : css("--s1")) : css("--muted");
+  const whisk = { id: "whisk", afterDatasetsDraw(c) { if (c.canvas.id !== "cOdds") return; const { ctx, scales: { x, y } } = c; ctx.save(); ctx.lineWidth = 2;
+    O.forEach((r, i) => { const py = y.getPixelForValue(i); ctx.strokeStyle = css("--muted"); ctx.beginPath(); ctx.moveTo(x.getPixelForValue(r.ci_low), py); ctx.lineTo(x.getPixelForValue(r.ci_high), py); ctx.stroke(); });
+    const p1 = x.getPixelForValue(1); ctx.setLineDash([4, 4]); ctx.strokeStyle = css("--text-2"); ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(p1, c.chartArea.top); ctx.lineTo(p1, c.chartArea.bottom); ctx.stroke(); ctx.restore(); } };
+  mk("cOdds", { type: "scatter", plugins: [whisk], data: { datasets: [{ data: O.map((r, i) => ({ x: r.odds_ratio, y: i })), backgroundColor: O.map(oddsCol), pointRadius: 7, pointHoverRadius: 9, borderColor: css("--surface"), borderWidth: 2 }] },
+    options: baseOpts({ interaction: { mode: "nearest", intersect: false }, plugins: Object.assign(baseOpts().plugins, { legend: { display: false }, tooltip: Object.assign(baseOpts().plugins.tooltip, { callbacks: { label: c => { const r = O[c.dataIndex]; return ` ${r.label}: OR ${r.odds_ratio.toFixed(2)} (95% CI ${r.ci_low.toFixed(2)}–${r.ci_high.toFixed(2)}), p ${r.p < 0.001 ? "<0.001" : "= " + r.p.toFixed(3)}`; } } }) }),
+      scales: { x: { min: 0.7, max: 1.9, grid: { color: css("--grid") }, ticks: { color: css("--text-2") }, title: { display: true, text: "Adjusted odds ratio", color: css("--text-2") } },
+        y: { min: -0.5, max: O.length - 0.5, grid: { display: false }, afterBuildTicks: ax => { ax.ticks = O.map((_, i) => ({ value: i })); }, ticks: { autoSkip: false, color: css("--text-2"), font: { size: 11 }, callback: v => O[v] ? O[v].label : "" } } } }) });
+  const cq = [...new Set(D.cohorts.map(r => r.cohort))].sort(), ds = [...new Set(D.cohorts.map(r => r.d))].sort((a, b) => a - b);
+  const qLab = c => { const [y, m] = c.split("-"); return y + " Q" + Math.ceil(+m / 3); };
+  const cohortCol = c => (+c.split("-")[1] === 4 ? (c.startsWith("2025") ? css("--bad") : css("--s2")) : null);
+  const pal = ["--s1", "--s3", "--s7", "--s4", "--s5"]; let pi = 0;
+  mk("cCohort", { type: "line", data: { labels: ds, datasets: cq.map(c => { const col = cohortCol(c) || css(pal[pi++ % pal.length]); return { label: qLab(c) + (+c.split("-")[1] === 4 ? " (summer start)" : ""), data: ds.map(d => (D.cohorts.find(r => r.cohort === c && r.d === d) || {}).retained ?? null), borderColor: col, backgroundColor: col, borderWidth: +c.split("-")[1] === 4 ? 3 : 2, pointRadius: 2, tension: 0.2, spanGaps: false }; }) },
+    options: baseOpts({ plugins: Object.assign(baseOpts().plugins, { tooltip: Object.assign(baseOpts().plugins.tooltip, { callbacks: { title: c => `Day ${c[0].label}`, label: c => ` ${c.dataset.label}: ${c.parsed.y == null ? "–" : c.parsed.y.toFixed(1) + "%"}` } }) }),
+      scales: { x: { grid: { display: false }, ticks: { color: css("--text-2") }, title: { display: true, text: "Days since first swap", color: css("--text-2") } }, y: { grid: { color: css("--grid") }, ticks: { color: css("--text-2"), callback: v => v + "%" }, border: { display: false } } } }) });
+}
+
+/* ---------- recommendations & quality ---------- */
+function renderRecs() {
+  const tag = v => (v === "No" || v.startsWith("No,") || v.startsWith("No ")) && !v.startsWith("Not") ? ["no", "✕ Don't fund"] : v.startsWith("Yes") ? ["yes", "✓ Fund, redirected"] : ["part", "◐ Fund selectively"];
+  $("verdicts").innerHTML = D.budget.map(b => { const [c, t] = tag(b.verdict); return `<div class="verdict"><div class="tag ${c}">${t}</div><h4>${b.proposal}</h4><p><b>${b.verdict}.</b> ${b.evidence}</p></div>`; }).join("");
+  const R = [
+    ["Replace the " + M.hot_gen1_stations + " Gen1 cabinets in Jaipur, Delhi NCR & Hyderabad with Gen3 before next April", "Start with cooling retrofits on the same cabinets (5°C cooler ≈ " + fmtN(M.cooling_5c_fails_avoided) + " failures avoided, " + M.cooling_5c_pct_of_gen3.toFixed(0) + "% of the Gen3 benefit), higher summer inventory, and moving charged packs in from nearby Gen2/3 sites before 12:00 on heat-alert days. Owner: Network Ops.", "≈" + fmtN(M.fails_avoided_per_year), "failures avoided / yr (" + M.fails_avoided_share_summer.toFixed(0) + "% of summer failures), ≈₹" + M.gen3_replacement_revenue_m_per_year.toFixed(1) + "M revenue"],
+    ["Pull and replace the bad-lot packs (Kyron KY-2407/08/09)", "Physically remove the " + M.kyron_retired_packs.toLocaleString() + " 'retired' packs still in circulation, replace the " + M.writeoff_2w_packs.toLocaleString() + " 2W packs (" + M.retired_2w_share_of_fleet.toFixed(0) + "% of the 2W fleet) before summer, claim warranty, and buy on lot acceptance tests rather than supplier name (Kyron's later lots are normal). Owner: Procurement / Asset mgmt.", "≈₹" + M.kyron_replacement_m.toFixed(0) + "M", "replacement packs; +12 km per swap for affected riders"],
+    ["Protect every new rider's first fortnight", "Route new riders to healthy packs (screen by lot, not SoH alone), send an automatic credit after any failed swap, push the 'nearest stocked station' in the app, and avoid heavy summer acquisition in hot cities until #1 is done. Owner: CX / Growth.", Math.round(M.riders_saved_if_no_early_failures) + "–" + Math.round(M.riders_saved_high), "more riders kept per 13.8K new riders (≈1 pt churn)"],
+    ["Renegotiate ZipDrop: no exclusive on current terms", "Volume-tiered discount capped near 15%, make the peak surcharge billable, tie discounts to off-peak volume. Owner: Partnerships / Finance.", "≈₹" + M.zipdrop_extra_discount_m_per_year.toFixed(1) + "M", "margin recovered / yr"],
+    ["Keep peak pricing as a revenue tool, extended after the capacity fix", "Roll out to the 4 control cities for independent riders once summer failures are down; deepen the off-peak discount if shifting demand is the goal. Owner: Pricing.", "≈₹" + M.pricing_rollout_net_m_per_year.toFixed(1) + "M", "extra revenue / yr, net of the " + Math.abs(M.did_swaps_per_rider_pct).toFixed(1) + "% drop in swaps per rider"],
+    ["Fix the data plumbing", "Exclude test cabinets from reporting, patch firmware v3.2.0 time handling, repair the payment_mode export, add a 'battery/range' ticket category. Owner: Data / Engineering.", "~6 months", "earlier warning on the next battery problem"]];
+  $("recs").innerHTML = R.map((r, i) => `<div class="rec"><div class="n">${i + 1}</div><div><h4>${r[0]}</h4><p>${r[1]}</p></div><div class="impact"><div class="big">${r[2]}</div><div class="small">${r[3]}</div></div></div>`).join("");
+  $("dqTable").innerHTML = "<thead><tr><th>Area</th><th>Check</th><th>Result</th><th>Action taken</th></tr></thead><tbody>" + D.scorecard.map(r => `<tr><td>${r.area}</td><td style="white-space:normal">${r.check}</td><td style="white-space:normal">${r.result}</td><td style="white-space:normal">${r.action}</td></tr>`).join("") + "</tbody>";
+}
+
+/* ---------- wiring ---------- */
+document.querySelectorAll("nav.tabs button").forEach(b => b.onclick = () => {
+  document.querySelectorAll("nav.tabs button").forEach(x => x.classList.toggle("active", x === b));
+  document.querySelectorAll(".panel").forEach(p => p.classList.toggle("active", p.id === "p-" + b.dataset.tab));
+  try { localStorage.setItem("vr-tab", b.dataset.tab); } catch (e) {}
+  Object.values(charts).forEach(c => c.resize());
+});
+["fCity", "fVc", "fGen", "fFrom", "fTo"].forEach(id => $(id).onchange = render);
+$("summerOnly").onchange = () => renderHeat(F());
+$("resetBtn").onclick = () => { $("fCity").value = "all"; $("fVc").value = "all"; $("fGen").value = "all"; $("fFrom").value = months[0]; $("fTo").value = months[months.length - 1]; render(); };
+$("themeBtn").onclick = () => {
+  const cur = document.documentElement.getAttribute("data-theme") || (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+  const next = cur === "dark" ? "light" : "dark"; document.documentElement.setAttribute("data-theme", next);
+  try { localStorage.setItem("vr-theme", next); } catch (e) {}
+  render(); renderStatic();
+};
+try { const t = (location.hash.match(/theme=(light|dark)/) || [])[1] || localStorage.getItem("vr-theme"); if (t) document.documentElement.setAttribute("data-theme", t); } catch (e) {}
+Chart.defaults.font.family = getComputedStyle(document.body).fontFamily;
+render(); renderStatic(); renderRecs();
+const hashTab = (location.hash.match(/tab=(\w+)/) || [])[1];
+if (hashTab) { const b = document.querySelector(`nav.tabs button[data-tab="${hashTab}"]`); if (b) b.click(); } else
+try { const tb = localStorage.getItem("vr-tab"); if (tb) { const b = document.querySelector(`nav.tabs button[data-tab="${tb}"]`); if (b) b.click(); } } catch (e) {}
+</script>
+</body>
+</html>

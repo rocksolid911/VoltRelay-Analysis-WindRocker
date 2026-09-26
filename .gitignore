@@ -1,0 +1,24 @@
+# Environment and caches
+.venv/
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+
+# Dataset: large and provided by the organisers (see README for where to place it)
+Hackathon Data Set _ Gradient/
+data/
+problem_statement.txt
+
+# Scratch / exploration files
+colab_folder_setup.ipynb
+scripts/explore*.py
+scripts/patch_*.py
+scripts/dump_outputs.py
+outputs/shots/
+outputs/figures/a04_heat_cliff.png
+video/build/
+
+# LinkedIn content (posted separately)
+content/carousel.html
+content/VoltRelay_LinkedIn_Carousel_WindRocker.pdf
+content/linkedin_post.md

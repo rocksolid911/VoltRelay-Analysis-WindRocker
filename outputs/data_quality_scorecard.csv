@@ -1,0 +1,17 @@
+area,check,result,action
+Keys,swap_events.event_id unique,"3,877,013 unique of 3,877,013",None needed
+Keys,"station_hourly (station, hour) unique","1,487,712 of 1,487,712",None needed
+Integrity,swap → rider / station / battery FKs,orphans: 0,None needed
+Outcome,Share of attempts completed,94.04% (brief: ~94%),Revenue/energy/battery-out analysed on completed swaps only; failures kept for service metrics
+Test stations,STN-TST-01/02 activity,"62,031.0 rows, ₹3.93M billed, active in all 24.0 hours (brief says 'small, zero-value')",EXCLUDED from all network analysis (internal test cabinets inflate BLR volume)
+Timestamps,Firmware v3.2.0 events 10 Mar – 14 Apr 2025,"139,490 events logged 5h30m early (verified in §4.2)",Shift +5h30m
+Duplicates,Near-duplicate offline-sync retries,repeat ≤3 min: offline_batch 0.16% vs realtime 0.17%; exact content duplicates: 0,No excess in offline_batch → no rows dropped (sensitivity-tested)
+Outliers,km_since_last_swap negative / >200 km,"7,814.0 negative, 7,712.0 > 200 km (odometer resets)",Set to NULL for range analysis
+Outliers,SoC/SoH readings > 100%,"9,853.0 readings",Clipped to 100 (calibration drift)
+Consistency,riders.home_city spellings,21 distinct strings for 6 cities,Standardised with alias map
+Missing,Station telemetry partial/missing,"partial 36,987, missing 9,384 hours (3.1%)","NaN-aware aggregation, never treated as 0"
+Bias,CSAT response rate,34.4% of tickets have a score,Reported by resolution-time bucket (not missing at random)
+Consistency,payment_mode values,"1 value only ('partner_invoice') for all rows, incl. independent riders",Field unusable; segment by partner_id / plan_type instead
+Consistency,tariff_code values present,"OFFPEAK, PARTNER, PEAK, STD (PREPAID, PROMO_FREE never appear)",Noted; prepaid riders identified via plan_type
+Timestamps,Tickets outside the data window,86.0 tickets dated before 2024 or after Jun 2025,Excluded from time-trend views
+Labels,Ticket category accuracy,"9,484 'other' tickets; comments describe vehicle/battery weakness",Re-labelled with EN/Hinglish text rules (§4.6)

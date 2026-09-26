@@ -1,0 +1,20 @@
+claim,original estimate,after re-check,verdict
+Gen1 × heat drives summer failures,Gen1 12.5% vs Gen3 4.7% in summer,Holds at every load level (Gen1 ≥14.4% vs Gen3 ≤5.2%); Gen3 sites are busier; outages and offline chargers ruled out,✅ Holds
+Worst 20% of stations = 43% of failures,43% of failures,They hold 31% of attempts (1.4× concentration). Better stat: 36 hot-city Gen1 stations = 58% of summer failures,⚠️ Overstated framing
+Heat threshold at 45°C,stock-outs 37% of hours above 45°C,"Holds for failures: 4.1% on days peaking below 43°C vs 18.7% at 46°C+. Stock-out hours peak later (6% at 45°C, 59% at 50°C)",✅ Holds (refined)
+3W fails more because fewer stations have 3W slots,narrative claim,3W failure is the same with or without 3W slots; the gap exists all year (8.6% vs 3.3% outside summer),❌ Unsupported
+Failures rose faster than swaps (brief's premise),not challenged,"H1-25 vs H1-24: failures 2.1×, completed swaps 2.4×; no month of 2025 is worse than 2024",➕ Add
+Gen1→Gen3 avoids ≈22.6K failures a year,"22,609","Holds; worth ≈₹1.4M revenue a year, since a failure never triggers a retry (a rider's next attempt comes at the same time as after a success). Cooling cabinets 5°C could get ~64% of the benefit first","✅ Holds, ➕ monetise"
+Stop buying Kyron,supplier-level recommendation,Only lots KY-2407/08/09 are bad (75 SoH pts per 1K swaps); later Kyron 3W lots wear like Cellora (33 vs 33),⚠️ Overreach: lot problem
+≈₹48M of Kyron packs written off + ₹34M/yr excess wear,₹48M and ₹34M/yr,Same money counted twice. 2W packs = ₹44.3M; premature loss ≈₹28.7M; not a recurring saving once packs are pulled,⚠️ Overstated
+"Kyron degradation is real, not heat or usage",supplier split,Kyron SoH identical across 6 cities (spread 0.0 pts); returned at the same SoC; ~11% fewer km even at equal SoH,✅ Holds (stronger)
+Energy saved ₹3.4 per swap (margin bridge),+₹3.4,kWh per 2W swap fell 2.02 → 1.69 because packs aged (SoH 97% → 81%): riders got less energy,⚠️ Mislabelled
+Margin eroded to −₹17.5 per swap (H1-25),−₹17.5,Without the bad lots it would be −₹4.2: ~76% of the loss is one bad-lot cohort,➕ Add context
+ZipDrop exclusive: no,CM −₹31.1 per swap,Negative even before site costs (−₹19.9); the 28% discount bought no share (15.1% → 15.5%),✅ Holds (stronger)
+Pricing rollout +₹6.1M a year,₹6.1M,Pilot riders swapped 4.6% less often; revenue per rider +7.9% (not +11.8%) → ≈₹3.7M,⚠️ Overstated
+2+ early failures → churn OR 1.58,OR 1.58,OR 2.05 once early activity is controlled; weak packs 1.46; >20% early failures → 23% churn,⬆️ Understated
+≈135 riders saved per 13.8K,135,135–156 (lower and upper bound),⬆️ Understated
+Retention fell (brief),retention curves only,"April-2025 intake churned 16.8% vs 11.9% a year earlier; model predicts 14.6%, so part is unexplained",➕ Add
+Competitor activity is not a driver,competitor-nearby only,Competitor promos OR 0.90 (p=0.63); stations near a new competitor changed volume +12%,✅ Holds (extended)
+Firmware clock fix +5h30m,hour-of-day curves,Confirmed by billing: PEAK-tariff swaps inside peak windows 12% → 100%,✅ Holds (stronger)
+No near-duplicates to drop,0.16% vs 0.17% repeat rate,0 offline_batch duplicates under three stricter definitions,✅ Holds
