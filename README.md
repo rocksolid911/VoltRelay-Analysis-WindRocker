@@ -1,6 +1,13 @@
 # VoltRelay Energy: Service, Retention & Margin Analysis
 **Team WindRocker** · Gradient Learnings Data Analytics Hackathon
 
+| Notebook | Open |
+|---|---|
+| Main analysis | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/rocksolid911/VoltRelay-Analysis-WindRocker/blob/main/VoltRelay_Analysis_WindRocker.ipynb) |
+| Robustness checks | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/rocksolid911/VoltRelay-Analysis-WindRocker/blob/main/VoltRelay_Robustness_Checks_WindRocker.ipynb) |
+
+Both notebooks are saved with their outputs, so results can be read without running them. To re-run in Colab, see [Running the notebook in Google Colab](#running-the-notebook-in-google-colab).
+
 **Question:** what is really driving VoltRelay's service failures, new-rider churn and eroding per-swap margins, and where should the next budget go?
 
 **Answer in one line:** three fixable operational problems. Gen1 chargers overheat in Jaipur, Delhi NCR and Hyderabad summers. Three bad battery lots from one supplier (Kyron KY-2407/08/09) degraded 2.4× faster and erased the price-rise margin; the supplier's later lots are fine. New riders who hit 2+ failed swaps in their first fortnight churn 1.7× more.
