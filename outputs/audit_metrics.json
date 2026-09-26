@@ -41,7 +41,7 @@
  "cooling_5c_pct_of_gen3": 63.6481,
  "fail_3w_rest": 8.6208,
  "fail_2w_rest": 3.338,
- "retry_within_1h_pct": 4.5546,
+ "retry_within_1h_pct": 4.5537,
  "failure_revenue_lost_m_18mo": 14.3098,
  "gen3_replacement_revenue_m_per_year": 1.4122,
  "kyron_2w_bad_loss_1k": 75.1764,

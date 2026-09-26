@@ -45,13 +45,20 @@ import statsmodels.formula.api as smf
 if IS_COLAB:
     from google.colab import drive
     drive.mount("/content/drive")
-    CANDIDATES = [Path("/content/drive/MyDrive/DataAnalyticsHackathon")]
+    ROOTS = [Path("/content/drive/MyDrive/DataAnalyticsHackathon"), Path("/content/drive/MyDrive")]
 else:
-    CANDIDATES = [Path.cwd(), Path.cwd().parent]
-PROJECT = next((p for p in CANDIDATES if (p / "Hackathon Data Set _ Gradient").exists() or (p / "data/parquet").exists()), CANDIDATES[0])
-os.chdir(PROJECT)
-DATA_DIR = PROJECT / "Hackathon Data Set _ Gradient"
+    ROOTS = [Path.cwd(), Path.cwd().parent]
+# The organisers' Drive folder is "Hackathon Data Set | Gradient"; a local download is "... _ Gradient". Either works,
+# inside the project folder or as a shortcut at the top of My Drive.
+DATA_NAMES = ["Hackathon Data Set _ Gradient", "Hackathon Data Set | Gradient"]
+DATA_DIR = next((r / n for r in ROOTS for n in DATA_NAMES if (r / n).exists()), ROOTS[0] / DATA_NAMES[0])
+PROJECT = ROOTS[0] if IS_COLAB else next((r for r in ROOTS if (r / "data/parquet").exists() or DATA_DIR.parent == r), ROOTS[0])
+PROJECT.mkdir(parents=True, exist_ok=True); os.chdir(PROJECT)
 PARQUET = PROJECT / "data/parquet"
+if not DATA_DIR.exists() and not PARQUET.exists():
+    raise FileNotFoundError("Data not found. Add a shortcut to the organisers' 'Hackathon Data Set | Gradient' folder in "
+                            "MyDrive (or MyDrive/DataAnalyticsHackathon), then re-run. Looked in: " + ", ".join(map(str, ROOTS)))
+print("Data:", DATA_DIR if DATA_DIR.exists() else PARQUET)
 FIG = PROJECT / "outputs/figures"; FIG.mkdir(parents=True, exist_ok=True)
 OUT = PROJECT / "outputs"
 print("Project:", PROJECT, "| Colab:", IS_COLAB, "| duckdb", duckdb.__version__, "| pandas", pd.__version__)

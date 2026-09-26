@@ -1,10 +1,10 @@
 # VoltRelay Energy: Service, Retention & Margin Analysis
 **Team WindRocker** · Gradient Learnings Data Analytics Hackathon
 
-| Notebook | Open |
-|---|---|
-| Main analysis | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/rocksolid911/VoltRelay-Analysis-WindRocker/blob/main/VoltRelay_Analysis_WindRocker.ipynb) |
-| Robustness checks | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/rocksolid911/VoltRelay-Analysis-WindRocker/blob/main/VoltRelay_Robustness_Checks_WindRocker.ipynb) |
+### ▶ Submission notebook
+**`VoltRelay_Analysis_WindRocker.ipynb`**: the full analysis (cleaning, EDA, six core questions, findings, recommendations). &nbsp; [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/rocksolid911/VoltRelay-Analysis-WindRocker/blob/main/VoltRelay_Analysis_WindRocker.ipynb)
+
+<sub>Optional appendix: `VoltRelay_Robustness_Checks_WindRocker.ipynb` stress-tests the main notebook's claims ([open in Colab](https://colab.research.google.com/github/rocksolid911/VoltRelay-Analysis-WindRocker/blob/main/VoltRelay_Robustness_Checks_WindRocker.ipynb)). It is supporting evidence only; the main notebook stands on its own.</sub>
 
 Both notebooks are saved with their outputs, so results can be read without running them. To re-run in Colab, see [Running the notebook in Google Colab](#running-the-notebook-in-google-colab).
 
@@ -16,7 +16,7 @@ Both notebooks are saved with their outputs, so results can be read without runn
 | File | What it is |
 |---|---|
 | `VoltRelay_Analysis_WindRocker.ipynb` | Colab notebook: data understanding → validation scorecard → 9 cleaning steps → EDA → six core questions → deep-dives → findings & recommendations. Runs top to bottom (~30 s on the raw CSVs). |
-| `VoltRelay_Robustness_Checks_WindRocker.ipynb` | Companion notebook that stress-tests every headline claim (confounding, exposure bias, double counting, behavioural response) and ends with a claim-by-claim scorecard. Revised numbers go to `outputs/audit_metrics.json`. Runs top to bottom (~20 s). |
+| `VoltRelay_Robustness_Checks_WindRocker.ipynb` | *Optional appendix.* Companion notebook that stress-tests every headline claim (confounding, exposure bias, double counting, behavioural response) and ends with a claim-by-claim scorecard. Revised numbers go to `outputs/audit_metrics.json`. Runs top to bottom (~20 s). |
 | `dashboard/VoltRelay_Dashboard_WindRocker.html` | Self-contained interactive dashboard (open in any browser): filters, 6 question tabs, recommendations, data-quality tab, light/dark. |
 | `report/VoltRelay_Report_WindRocker.pdf` | 12-page analysis report (problem, approach, insights, findings, recommendations, robustness appendix). |
 | `video/VoltRelay_WindRocker_3min.mp4` (+ `.srt`) | 3-minute narrated video: problem → approach → insights → recommendations. |
@@ -24,8 +24,8 @@ Both notebooks are saved with their outputs, so results can be read without runn
 | `outputs/metrics.json` · `outputs/figures/` | Every number and chart used above (single source of truth). |
 
 ## Running the notebook in Google Colab
-1. Put this folder in Google Drive as `MyDrive/DataAnalyticsHackathon/`, with the data in `MyDrive/DataAnalyticsHackathon/Hackathon Data Set _ Gradient/` (`.csv` or `.csv.gz` both work).
-2. Open the notebook in Colab → **Runtime → Run all** → allow the Drive mount.
+1. In Google Drive, open the organisers' shared folder **Hackathon Data Set | Gradient** → *Organize → Add shortcut* → **My Drive**. (A copied folder named `Hackathon Data Set _ Gradient`, or one inside `MyDrive/DataAnalyticsHackathon/`, also works; `.csv` or `.csv.gz`.)
+2. Click the **Open in Colab** button above → **Runtime → Run all** → allow the Drive mount. Outputs are written to `MyDrive/DataAnalyticsHackathon/outputs/`. Run the main notebook before the robustness one.
 3. Dependencies (`duckdb`, `pandas`, `pyarrow`, `statsmodels`, `scipy`, `matplotlib`) are preinstalled on Colab. The notebook installs `duckdb` if it is missing.
 
 Locally: `pip install duckdb pandas pyarrow statsmodels scipy matplotlib jinja2`, then run the notebook from this folder. `scripts/to_parquet.py` optionally builds a Parquet cache for faster reloads.
